@@ -1,0 +1,45 @@
+version: '3.8'
+
+volumes:
+  postgres_data:
+  virtualenv_cache:
+
+services:
+  backend:
+    container_name: library-backend
+    build: .
+    depends_on:
+      - db
+      - broker
+    volumes:
+      - virtualenv_cache:/data/pypoetry
+      - ./:/app
+    ports:
+      - "8001:8000"
+    restart: unless-stopped
+  db:
+    container_name: library-db
+    image: postgres:14.1-alpine
+    ports:
+      - "5434:5432"
+    environment:
+      POSTGRES_USER: vlad
+      POSTGRES_PASSWORD: gasik
+      POSTGRES_DB: test_name
+    volumes:
+      - ./schema.sql:/docker-entrypoint-initdb.d/schema.sql
+  broker:
+    container_name: library-broker
+    image: redis:6.2-alpine
+    ports:
+      - "6378:6379"
+  celery_worker:
+    container_name: library-celery_worker
+    build: .
+    depends_on:
+    - backend
+    - broker
+    command: celery -A app.tasks.celery.celery worker --loglevel=info
+    restart: unless-stopped
+    env_file:
+      - .env
