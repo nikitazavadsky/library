@@ -6,7 +6,7 @@ export default {
     extend: {},
   },
   daisyui: {
-    themes: ["corporate"],
+    themes: ["emerald"],
   },
   plugins: [require("daisyui")],
 } satisfies Config;
