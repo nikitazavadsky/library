@@ -13,6 +13,7 @@ from app.crud import (
     get_cursor,
     get_unavailable_books,
     get_user_book_list,
+    get_books_by_title,
     update_book_status,
 )
 from app.models import Book, BookFilters, UserResponseModelExtended
@@ -44,6 +45,15 @@ async def retrieve_books(
 
     return get_available_books(cursor)
 
+@book_router.get(
+    "/search",
+    summary="Search books by title.",
+    status_code=status.HTTP_200_OK
+)
+async def search_books_by_title(
+    cursor: psycopg2.extensions.cursor = Depends(get_cursor), search_term: str | None = ""
+) -> list[Book]:
+    return get_books_by_title(cursor, search_term)
 
 @book_router.get(
     "/mine",

@@ -6,6 +6,7 @@ from .book import (
     get_one_book,
     get_unavailable_books,
     get_user_book_list,
+    get_books_by_title,
     update_book_status,
 )
 from .db import export_table_to_csv, get_cursor, get_table_names
@@ -27,6 +28,7 @@ __all__ = [
     "get_one_book",
     "get_unavailable_books",
     "get_user_book_list",
+    "get_books_by_title",
     "update_book_status",
     # db
     "export_table_to_csv",

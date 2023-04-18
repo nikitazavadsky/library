@@ -17,10 +17,7 @@ export default function Header() {
   const [isRehydrated, setIsRehydrated] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
 
-  const totalComplectationsLength = items.reduce(
-    (totalLength, item) => totalLength + item.complectations.length,
-    0
-  );
+  const totalLength = items.length;
 
   const fakeAuth = useFakeAuthStore((state) => state.setIsAuthenticated);
 
@@ -67,7 +64,7 @@ export default function Header() {
             <div className="flex items-center">
               <div className="indicator mr-10">
                 <span className="badge-info badge indicator-item pointer-events-none">
-                  {totalComplectationsLength}
+                  {totalLength}
                 </span>
                 <Link href="/cart">
                   <ShoppingCartIcon className="h-8 w-8 text-accent-content" />
