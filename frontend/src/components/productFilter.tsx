@@ -15,7 +15,7 @@ const ProductFilter: React.FC<Props> = ({
   // Data from BE
 
   // RangeSlider
-  const [pageNumRange, setPageNumRange] = useState<[number, number]>([200, 500]);
+  const [pageNumRange, setPageNumRange] = useState<[number, number]>([0, 0]);
   const [authors, setAuthors] = useState<{ value: number; label: string }[]>([]);
   const [availability, setAvailability] = useState<{ value: boolean | 'any'; label: string }[]>([
     {value: true, label: 'Available'},
@@ -52,10 +52,10 @@ const ProductFilter: React.FC<Props> = ({
       <div className="mb-4">
         <h2 className="mb-8 text-center font-semibold">Price Range</h2>
         <RangeSlider
-          defaultValue={[200, 300]}
+          defaultValue={pageNumRange}
           value={pageNumRange}
-          min={1}
-          max={1000}
+          min={filters?.num_pages.min}
+          max={filters?.num_pages.max}
           onChange={(value) =>
             setPageNumRange([
               Number(value[0].toFixed(2)),
