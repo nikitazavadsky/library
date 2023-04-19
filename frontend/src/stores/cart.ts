@@ -3,11 +3,11 @@ import { create } from "zustand";
 import { createJSONStorage, devtools, persist } from "zustand/middleware";
 
 type Author = {
-  id: number,
-  firstName: string,
-  lastName: string,
-  origin: string
-}
+  id: number;
+  first_name: string;
+  last_name: string;
+  origin: string;
+};
 
 type CartItem = {
   id: number;
@@ -31,7 +31,7 @@ const useCartStore = create<CartState>()(
         items: [],
         addItem: (item) =>
           set((state) => {
-              return { items: state.items.concat({ ...item}) };
+            return { items: state.items.concat({ ...item }) };
           }),
 
         removeItem: (itemId) =>
