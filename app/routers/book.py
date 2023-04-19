@@ -37,7 +37,8 @@ book_router = APIRouter(tags=["books"])
     response_model=list[Book],
 )
 async def retrieve_books(
-    cursor: psycopg2.extensions.cursor = Depends(get_cursor), 
+    cursor: psycopg2.extensions.cursor = Depends(get_cursor),
+    search_term: str | None = None,
     availability: bool | None = None, 
     authors: str | None = None, 
     min: int | None = None, 
@@ -56,17 +57,19 @@ async def retrieve_books(
 
     print(f"Search params: {search_parameters}")
 
-    return get_all_books(cursor) if not search_parameters else filter_books(cursor, search_parameters)
+    result = None
 
-@book_router.get(
-    "/search",
-    summary="Search books by title.",
-    status_code=status.HTTP_200_OK
-)
-async def search_books_by_title(
-    cursor: psycopg2.extensions.cursor = Depends(get_cursor), search_term: str | None = ""
-) -> list[Book]:
-    return get_books_by_title(cursor, search_term)
+    if not search_parameters and search_term:
+        print("Performing text search...")
+        result = get_books_by_title(cursor, search_term)
+    elif search_parameters:
+        print("Performing filtering...")
+        result = filter_books(cursor, search_parameters)
+    else:
+        print("Retrieving all books...")
+        result = get_all_books(cursor)
+
+    return result
 
 @book_router.get(
     "/filters",
