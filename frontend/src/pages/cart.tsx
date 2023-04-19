@@ -30,7 +30,7 @@ const Cart: NextPage = () => {
   const cartMutation = useCheckoutMutation(onSuccessfulCheckout);
 
   const handleCheckout = () => {
-    const preparedItems = items.map((item) => (item.id));
+    const preparedItems = items.map((item) => item.id);
     const preparedCart = preparedItems;
 
     cartMutation.mutate(preparedCart);
@@ -57,7 +57,9 @@ const Cart: NextPage = () => {
                 className="mb-2 flex items-center justify-between"
               >
                 <p>
-                  {item.title}{" "}{item.authors[0]?.first_name[0]}{". "}{item.authors[0]?.last_name}
+                  {item.title} {item.authors[0]?.first_name}
+                  {". "}
+                  {item.authors[0]?.last_name}
                 </p>
                 <p>
                   <button
