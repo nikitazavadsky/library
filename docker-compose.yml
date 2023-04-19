@@ -16,7 +16,7 @@ services:
       - ./:/app
     ports:
       - "8001:8000"
-    restart: unless-stopped
+    restart: always
   db:
     container_name: library-db
     image: postgres:14.1-alpine

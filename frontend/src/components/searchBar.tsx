@@ -13,7 +13,7 @@ const SearchBar = () => {
 
     if (query.length > 0) {
       const params = new URLSearchParams();
-      params.set("model", query);
+      params.set("search_term", query);
       setSearchParams(params);
       setSearchText(query);
       // call the refetch method to trigger a new fetch for the filtered items based on the new search query
@@ -36,7 +36,7 @@ const SearchBar = () => {
       {data && searchText && (
         <SearchSuggestions
           searchText={searchText}
-          searchResults={data.data}
+          searchResults={data}
           clearSearchbar={() => setSearchText("")}
         />
       )}

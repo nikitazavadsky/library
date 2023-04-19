@@ -76,6 +76,7 @@ def create_app() -> FastAPI:
         version="0.1.0",
         docs_url="/docs",
         redoc_url=None,
+        debug=True
     )
     app.middleware("http")(db_connection)
     app.middleware("http")(exception_handler)

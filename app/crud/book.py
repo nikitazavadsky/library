@@ -16,6 +16,19 @@ BOOK_SQL = """
     JOIN book ON book_author.book_id = book.id
 """
 
+BOOK_SEARCH_SQL = """
+    SELECT DISTINCT ON (book.title) book.id, book.title, book.isbn, book.num_pages, (
+        SELECT json_agg(json_build_array(a.id, a.first_name, a.last_name, a.origin)) AS authors
+        FROM book_author ba
+        JOIN author a on ba.author_id = a.id
+        JOIN book b ON ba.book_id = b.id
+        WHERE book.id = b.id
+    )
+    FROM book_author
+    JOIN book ON book_author.book_id = book.id
+    WHERE book.title LIKE %s
+"""
+
 UNAVAILABLE_BOOKS_SQL = """
     SELECT book.id
     FROM book
@@ -59,6 +72,8 @@ def _get_books(cursor: psycopg2.extensions.cursor, sql, params: tuple = tuple())
 def get_all_books(cursor: psycopg2.extensions.cursor) -> list[Book]:
     return _get_books(cursor, BOOK_SQL)
 
+def get_books_by_title(cursor: psycopg2.extensions.cursor, search_term: str | None) -> list[Book]:
+    return _get_books(cursor, BOOK_SEARCH_SQL, (f"%{search_term}%",))
 
 def get_books_from_ids(cursor: psycopg2.extensions.cursor, book_ids: list[int]) -> list[Book]:
     sql = f"""
