@@ -115,8 +115,8 @@ const Profile = () => {
             <div className="flex flex-col">
               <p className="text-2xl font-bold">
                 Full Name:{" "}
-                {`${user?.firstName ?? "Missing firstName"} ${
-                  user?.lastName ?? "Missing lastName"
+                {`${user?.first_name ?? "Missing firstName"} ${
+                  user?.last_name ?? "Missing lastName"
                 }`}
               </p>
               <p className="text-2xl font-bold">Email: {user?.email}</p>
