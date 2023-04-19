@@ -1,9 +1,8 @@
 import { useAuthStore } from "@/stores/auth";
 import useCartStore from "@/stores/cart";
-import Image from "next/image";
 import Link from "next/link";
 
-const AvatarDropdown = ({ size = 50 }) => {
+const AvatarDropdown = () => {
   const { signOut, user } = useAuthStore();
   const { clearCart } = useCartStore();
 

@@ -22,7 +22,9 @@ export default function useSignInMutation(handleSuccess: () => void) {
     axios
       .post<{ refresh: string; access: string }>(`auth/login`, signInData)
       .then(async (res) => {
-        axios.defaults.headers.common.Authorization = `Bearer ${res.data.access}`;
+        const accessToken = res.data.access;
+        localStorage.setItem("access_token", accessToken);
+        axios.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
         const user = await fetchUserRole();
         if (user) {
           setUser(user, user?.role ?? USER_ROLE);
