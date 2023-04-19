@@ -9,15 +9,15 @@ import router from "next/router";
 import { create, type StoreApi } from "zustand";
 import { persist, createJSONStorage, devtools } from "zustand/middleware";
 
-type PossibleRoles =
+export type PossibleRoles =
   | typeof ADMIN_ROLE
   | typeof USER_ROLE
   | typeof FAKE_ROLE
   | typeof LIBRARIAN_ROLE;
 export interface User {
   id: number;
-  firstName: string;
-  lastName: string;
+  first_name: string;
+  last_name: string;
   email: string;
   role: PossibleRoles;
 }
@@ -84,8 +84,8 @@ const useFakeAuthStore = create<FakeAuthStore>(() => ({
     useAuthStore.setState({
       user: {
         id: 1,
-        firstName: "John",
-        lastName: "Doe",
+        first_name: "John",
+        last_name: "Doe",
         email: "john.doe@gmail.com",
         role: FAKE_ROLE,
       },
