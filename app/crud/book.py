@@ -2,7 +2,7 @@ from datetime import datetime, timezone
 
 import psycopg2.extensions
 
-from app.models import Author, Book, OrderStatus
+from app.models import Author, Book, OrderStatus, BookFilters, PageNumRange
 
 BOOK_SQL = """
     SELECT DISTINCT ON (book.title) book.id, book.title, book.isbn, book.num_pages, (
@@ -37,6 +37,15 @@ UNAVAILABLE_BOOKS_SQL = """
     WHERE bo.date_finished IS NULL
 """
 
+BOOK_FILTERS_AUTHORS_SQL = """
+    SELECT id, first_name, last_name, origin
+    FROM author
+"""
+
+BOOK_FILTERS_PAGES_NUM_RANGE_SQL = """
+    SELECT MIN(num_pages) as min, MAX(num_pages) as max
+    FROM book
+"""
 
 def get_book_object(book_item):
     authors = book_item["authors"]
@@ -51,6 +60,28 @@ def get_book_object(book_item):
         ],
     )
 
+def get_author_object(author):
+
+    return Author(
+        id=author["id"],
+        first_name=author["first_name"],
+        last_name=author["last_name"],
+        origin=author["origin"]
+    )
+
+def get_pages_num_range_object(range):
+    print(range)
+    return PageNumRange(
+        min=range["min"],
+        max=range["max"],
+    )
+
+def get_filters_object(authors: list[Author], page_num_range: PageNumRange):
+
+    return BookFilters(
+        authors=authors,
+        num_pages=page_num_range
+    )
 
 def get_one_book(cursor: psycopg2.extensions.cursor, book_id: int) -> Book | None:
     cursor.execute(f"""{BOOK_SQL} WHERE book.id = %s""", (book_id,))
@@ -68,12 +99,26 @@ def _get_books(cursor: psycopg2.extensions.cursor, sql, params: tuple = tuple())
 
     return list(map(get_book_object, book_items))
 
+def _get_filters(cursor: psycopg2.extensions.cursor) -> BookFilters:
+    cursor.execute(BOOK_FILTERS_AUTHORS_SQL)
+
+    authors = list(map(get_author_object, cursor.fetchall()))
+
+    cursor.execute(BOOK_FILTERS_PAGES_NUM_RANGE_SQL)
+
+    page_num_range = get_pages_num_range_object(cursor.fetchone())
+
+    return get_filters_object(authors, page_num_range)
+
 
 def get_all_books(cursor: psycopg2.extensions.cursor) -> list[Book]:
     return _get_books(cursor, BOOK_SQL)
 
 def get_books_by_title(cursor: psycopg2.extensions.cursor, search_term: str | None) -> list[Book]:
     return _get_books(cursor, BOOK_SEARCH_SQL, (f"%{search_term}%",))
+
+def get_book_filters(cursor: psycopg2.extensions.cursor) -> BookFilters:
+    return _get_filters(cursor)
 
 def get_books_from_ids(cursor: psycopg2.extensions.cursor, book_ids: list[int]) -> list[Book]:
     sql = f"""

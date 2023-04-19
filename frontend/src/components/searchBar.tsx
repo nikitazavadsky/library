@@ -31,7 +31,7 @@ const SearchBar = () => {
         className="input-secondary input w-full max-w-sm"
         value={searchText}
         onChange={handleSearchQueryChange}
-        placeholder="Search for items"
+        placeholder="Search for books"
       />
       {data && searchText && (
         <SearchSuggestions

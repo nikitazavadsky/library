@@ -1,6 +1,7 @@
 from .book import (
     get_all_books,
     get_available_books,
+    get_book_filters,
     get_books_from_ids,
     get_books_taken_by_user,
     get_one_book,
@@ -23,6 +24,7 @@ __all__ = [
     # book
     "get_all_books",
     "get_available_books",
+    "get_book_filters",
     "get_books_from_ids",
     "get_books_taken_by_user",
     "get_one_book",

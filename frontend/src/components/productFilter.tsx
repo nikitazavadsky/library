@@ -1,4 +1,5 @@
 import useFiltersQuery, { type Filters } from "@/queries/useFilters";
+import { Author } from "@/schemas/authorSchema";
 import { MultiSelect, RangeSlider, Select } from "@mantine/core";
 import { useState } from "react";
 
@@ -12,18 +13,35 @@ const ProductFilter: React.FC<Props> = ({
   handleResetFilters,
 }) => {
   // Data from BE
+
   // RangeSlider
   const [pageNumRange, setPageNumRange] = useState<[number, number]>([200, 500]);
+  const [authors, setAuthors] = useState<{ value: number; label: string }[]>([]);
+  const [availability, setAvailability] = useState<{ value: boolean; label: string }[]>([]);
 
   // // Selects
-   const [selectedAvailability, setSelectedAvailability] = useState<string | null>(null);
+  const [selectedAvailability, setSelectedAvailability] = useState<string | null>(null);
+  const [selectedAuthors, setSelectedAuthors] = useState<{ value: number; label: string }[]>([]);
 
-  // const onSuccessQuery = (filterData: Filters) => {
+  const onSuccessQuery = (filterData: Filters) => {
+    const { num_pages, authors } = filterData;
 
-  //   setPageNumRange([filterData.price.min, filterData.price.max]);
-  // };
+    setPageNumRange([num_pages.min, num_pages.max]);
+    setAuthors(
+      authors.map((author) => ({
+        value: author.id,
+        label: `${author.first_name} ${author.last_name}`,
+      }))
+    );
+    setAvailability(
+      [
+        {value: true, label: 'Available'},
+        {value: false, label: 'Not available'},
+      ]
+    )
+  };
 
-  // const { data: filters } = useFiltersQuery(onSuccessQuery);
+  const { data: filters } = useFiltersQuery(onSuccessQuery);
   return (
     <div className="border border-accent p-4 shadow-2xl md:mr-4">
       <div className="mb-4">
@@ -52,7 +70,19 @@ const ProductFilter: React.FC<Props> = ({
           value={selectedAvailability}
           onChange={(value) => setSelectedAvailability(value)}
           nothingFound="No options"
-          data={['Available', 'Not available']}
+          data={availability.map(obj => obj.label)}
+        />
+      </div>
+
+      <div className="mb-4">
+        <MultiSelect
+          label="Select authors"
+          placeholder="Pick one or more"
+          searchable
+          value={selectedAuthors}
+          onChange={(value) => setSelectedAuthors(value)}
+          nothingFound="No options"
+          data={authors}
         />
       </div>
 
@@ -62,6 +92,7 @@ const ProductFilter: React.FC<Props> = ({
           onClick={() => {
             handleApplyFilters({
               availability: selectedAvailability,
+              authors: selectedAuthors,
               num_range: {
                 min: pageNumRange[0],
                 max: pageNumRange[1],
@@ -75,7 +106,10 @@ const ProductFilter: React.FC<Props> = ({
           className="btn-error btn"
           onClick={() => {
             handleResetFilters();
-            // if (filters) onSuccessQuery(filters);
+            setSelectedAuthors([]);
+            setSelectedAvailability(null);
+            setPageNumRange([200, 500]);
+            if (filters) onSuccessQuery(filters);
           }}
         >
           Reset Filters

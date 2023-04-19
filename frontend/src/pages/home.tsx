@@ -20,6 +20,8 @@ const Home: NextPage = () => {
 
   const handleApplyFilters = (filterObj: Record<string, unknown>) => {
     const flatFilters = flattenFilters(filterObj);
+    console.log(filterObj)
+    console.log(flatFilters)
 
     const params = new URLSearchParams();
     Object.entries(flatFilters).forEach(([key, value]) => {

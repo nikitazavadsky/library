@@ -10,6 +10,7 @@ from app.crud import (
     export_table_to_csv,
     get_all_books,
     get_available_books,
+    get_book_filters,
     get_cursor,
     get_unavailable_books,
     get_user_book_list,
@@ -54,6 +55,16 @@ async def search_books_by_title(
     cursor: psycopg2.extensions.cursor = Depends(get_cursor), search_term: str | None = ""
 ) -> list[Book]:
     return get_books_by_title(cursor, search_term)
+
+@book_router.get(
+    "/filters",
+    summary="Get book filters",
+    status_code=status.HTTP_200_OK
+)
+async def retrieve_book_filters(
+    cursor: psycopg2.extensions.cursor = Depends(get_cursor)
+) -> BookFilters:
+    return get_book_filters(cursor)
 
 @book_router.get(
     "/mine",

@@ -1,4 +1,4 @@
-from .book import Author, Book, BookAuthor, BookFilters
+from .book import Author, Book, BookAuthor, BookFilters, PageNumRange
 from .order import OrderDetailResponseModel, OrderResponseModel, OrderStatus
 from .token import TokenObtainPair, TokenUpdateModel
 from .user import (
@@ -16,6 +16,7 @@ __all__ = [
     "Book",
     "BookAuthor",
     "BookFilters",
+    "PageNumRange",
     # order
     "OrderDetailResponseModel",
     "OrderResponseModel",

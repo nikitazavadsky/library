@@ -21,6 +21,10 @@ class Book(BaseModel):
     num_pages: int
     authors: list[Author]
 
+class PageNumRange(BaseModel):
+    min: int
+    max: int
 
 class BookFilters(BaseModel):
-    available: bool
+    authors: list[Author]
+    num_pages: PageNumRange
