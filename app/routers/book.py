@@ -8,6 +8,7 @@ from app.core.exceptions import NotFoundException, UploadBooksException
 from app.core.jwt import get_current_user
 from app.crud import (
     export_table_to_csv,
+    filter_books,
     get_all_books,
     get_available_books,
     get_book_filters,
@@ -36,15 +37,26 @@ book_router = APIRouter(tags=["books"])
     response_model=list[Book],
 )
 async def retrieve_books(
-    cursor: psycopg2.extensions.cursor = Depends(get_cursor), available: bool | None = None
+    cursor: psycopg2.extensions.cursor = Depends(get_cursor), 
+    availability: bool | None = None, 
+    authors: str | None = None, 
+    min: int | None = None, 
+    max: int | None = None
 ) -> list[Book]:
-    if available is None:
-        return get_all_books(cursor)
+    
+    search_parameters = {}
 
-    if not available:
-        return get_unavailable_books(cursor)
+    if availability != None:
+        search_parameters["availability"] = availability
+    if authors:
+        search_parameters["authors"] = authors
+    if min and max:
+        search_parameters["min"] = min
+        search_parameters["max"] = max
 
-    return get_available_books(cursor)
+    print(f"Search params: {search_parameters}")
+
+    return get_all_books(cursor) if not search_parameters else filter_books(cursor, search_parameters)
 
 @book_router.get(
     "/search",

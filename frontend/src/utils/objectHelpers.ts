@@ -80,9 +80,9 @@ export function flattenFilters(
       );
     } else {
       const shouldAdd =
-        !dropEmpty || (Array.isArray(value) ? value.length > 0 : value);
+        !dropEmpty || (Array.isArray(value) ? value.length > 0 : (value !== undefined && value !== null));
       if (shouldAdd) {
-        acc[newKey] = Array.isArray(value) ? value.join(",") : value;
+        acc[newKey] = Array.isArray(value) ? value : String(value);
       }
     }
     return acc;

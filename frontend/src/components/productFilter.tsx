@@ -17,7 +17,7 @@ const ProductFilter: React.FC<Props> = ({
   // RangeSlider
   const [pageNumRange, setPageNumRange] = useState<[number, number]>([200, 500]);
   const [authors, setAuthors] = useState<{ value: number; label: string }[]>([]);
-  const [availability, setAvailability] = useState<{ value: boolean; label: string }[]>([]);
+  const [availability, setAvailability] = useState<{ value: boolean | null; label: string }[]>([]);
 
   // // Selects
   const [selectedAvailability, setSelectedAvailability] = useState<string | null>(null);
@@ -37,6 +37,7 @@ const ProductFilter: React.FC<Props> = ({
       [
         {value: true, label: 'Available'},
         {value: false, label: 'Not available'},
+        {value: null, label: 'Any'},
       ]
     )
   };
@@ -70,7 +71,7 @@ const ProductFilter: React.FC<Props> = ({
           value={selectedAvailability}
           onChange={(value) => setSelectedAvailability(value)}
           nothingFound="No options"
-          data={availability.map(obj => obj.label)}
+          data={availability}
         />
       </div>
 

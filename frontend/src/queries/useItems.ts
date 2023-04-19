@@ -18,7 +18,7 @@ export function useItemsQuery() {
 export function useApplyFiltersQuery(params?: URLSearchParams) {
   const getApplyFiltersQueryFn = () =>
     axios
-      .get<Item[]>("books/search", {
+      .get<Item[]>("books/", {
         params,
       })
       .then((res) => res.data);

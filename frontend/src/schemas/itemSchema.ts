@@ -17,4 +17,5 @@ export const itemMutateSchema = itemSchema
   });
 
 export type Item = z.infer<typeof itemSchema>;
+export type ItemFields = Omit<Item, "id">;
 export type ItemMutateSchema = z.infer<typeof itemMutateSchema>;

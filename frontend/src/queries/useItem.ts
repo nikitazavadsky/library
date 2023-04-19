@@ -16,7 +16,7 @@ export default function useItemQuery(
   options: CustomQueryOptions
 ): UseQueryResult<DataType> {
   const getItemQueryFn = (itemId: string) =>
-    axios.get<DataType>(`items/${itemId}`).then((res) => res.data);
+    axios.get<DataType>(`books/${itemId}`).then((res) => res.data);
 
   // TODO: Might need to raise an issue with @tanstack/react-query
   return useQuery<DataType, Error, DataType>({

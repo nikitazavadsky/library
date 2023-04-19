@@ -42,7 +42,7 @@ export default function ItemCard({ item }: { item: Item }) {
           />
         </Link>
         <div className="card-body">
-          <Link href={`item/${item.id}`}>
+          <Link href={`books/${item.id}`}>
             <h2 className="link-hover link card-title truncate text-4xl font-extrabold leading-tight">
               {item.title}
             </h2>

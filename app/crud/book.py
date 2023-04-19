@@ -95,6 +95,8 @@ def get_one_book(cursor: psycopg2.extensions.cursor, book_id: int) -> Book | Non
 def _get_books(cursor: psycopg2.extensions.cursor, sql, params: tuple = tuple()) -> list[Book]:
     cursor.execute(sql, params)
 
+    print(f"Executing SQL query: {sql} with params {params}")
+
     book_items = cursor.fetchall()
 
     return list(map(get_book_object, book_items))
@@ -131,7 +133,8 @@ def get_books_from_ids(cursor: psycopg2.extensions.cursor, book_ids: list[int]) 
     return _get_books(cursor, sql, params)
 
 
-def filter_books(cursor: psycopg2.extensions.cursor, is_available: bool = True) -> list[Book]:
+def filter_books(cursor: psycopg2.extensions.cursor, search_params: dict) -> list[Book]:
+
     unavailable_sql = """
         SELECT book.id
         FROM book
@@ -147,14 +150,40 @@ def filter_books(cursor: psycopg2.extensions.cursor, is_available: bool = True) 
         {unavailable_sql}
     """
 
-    sql = f"""
-        {BOOK_SQL}
-        JOIN (
-            {available_sql if is_available else unavailable_sql}
-        ) AS sub ON book.id = sub.id
-    """
+    FILTER_QUERY = BOOK_SQL
+    is_available = None
 
-    return _get_books(cursor, sql)
+    if search_params:
+        is_available = search_params.get("availability")
+
+        if is_available != None:
+            FILTER_QUERY = f"""
+                {BOOK_SQL}
+                JOIN (
+                    {available_sql if is_available else unavailable_sql}
+                ) AS sub ON book.id = sub.id
+            """
+
+        FILTER_QUERY = FILTER_QUERY + "\n WHERE "
+
+        query_params = []
+
+        for key, value in search_params.items():
+            if isinstance(value, str):
+                value = value.split(",")
+            if key == 'min':
+                query_params.append(f"book.num_pages >= {value}")
+            elif key == 'max':
+                query_params.append(f"book.num_pages <= {value}")
+            elif isinstance(value, list) and key == "authors":
+                values_as_str = ",".join([f"{v}" for v in value])
+                query_params.append(f"book_author.author_id IN ({values_as_str})")
+            elif not isinstance(value, list) and key == "authors":
+                query_params.append(f"book_author.author_id = '{value}'")
+
+        FILTER_QUERY += " AND ".join(query_params)
+
+    return _get_books(cursor, FILTER_QUERY)
 
 
 def get_unavailable_books(cursor: psycopg2.extensions.cursor) -> list[Book]:
