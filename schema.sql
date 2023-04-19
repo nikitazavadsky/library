@@ -1,5 +1,6 @@
+SET client_encoding = 'UTF8';
 DROP DATABASE IF EXISTS library;
-CREATE DATABASE library;
+CREATE DATABASE library ENCODING = 'UTF8';
 \c library
 CREATE TABLE IF NOT EXISTS user_ (
   id BIGSERIAL PRIMARY KEY,
