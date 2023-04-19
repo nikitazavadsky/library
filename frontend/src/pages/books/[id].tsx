@@ -102,7 +102,7 @@ const ItemPage = ({
         <span className="label-text">Book title</span>
       </label>
       <input
-        {...register("name")}
+        {...register("title")}
         type="text"
         placeholder="Enter book title"
         className="input-bordered input-primary input w-full"

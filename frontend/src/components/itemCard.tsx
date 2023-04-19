@@ -57,7 +57,7 @@ export default function ItemCard({ item }: { item: Item }) {
                   handleDataSubmit(item);
                 }}
               >
-                Add to cart
+                Add to Wishlist
               </button>
             ) : (
               <button
