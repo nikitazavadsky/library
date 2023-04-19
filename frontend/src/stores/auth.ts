@@ -52,6 +52,7 @@ const useAuthStore = create<AuthStore>()(
             isAuthenticated: true,
           }),
         signOut: () => {
+          localStorage.removeItem("access_token");
           void router.push("/home");
           resetAuthState(set);
         },
