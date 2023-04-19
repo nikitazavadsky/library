@@ -4,8 +4,8 @@ import { z } from "zod";
 export const authorSchema = z
   .object({
     id: z.number(),
-    firstName: z.string(),
-    lastName: z.string(),
+    first_name: z.string(),
+    last_name: z.string(),
     origin: z.string().optional(),
   })
   .required();

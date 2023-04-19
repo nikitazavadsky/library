@@ -6,7 +6,7 @@ export const itemSchema = z
     id: z.number(),
     title: z.string(),
     isbn: z.string(),
-    numPages: z.number(),
+    num_pages: z.number(),
     authors:  z.array(authorSchema),
   })
   .required();

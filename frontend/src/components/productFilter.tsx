@@ -17,10 +17,14 @@ const ProductFilter: React.FC<Props> = ({
   // RangeSlider
   const [pageNumRange, setPageNumRange] = useState<[number, number]>([200, 500]);
   const [authors, setAuthors] = useState<{ value: number; label: string }[]>([]);
-  const [availability, setAvailability] = useState<{ value: boolean | null; label: string }[]>([]);
+  const [availability, setAvailability] = useState<{ value: boolean | 'any'; label: string }[]>([
+    {value: true, label: 'Available'},
+    {value: false, label: 'Not available'},
+    {value: 'any', label: 'Any'},
+  ]);
 
   // // Selects
-  const [selectedAvailability, setSelectedAvailability] = useState<string | null>(null);
+  const [selectedAvailability, setSelectedAvailability] = useState<boolean | null>(null);
   const [selectedAuthors, setSelectedAuthors] = useState<{ value: number; label: string }[]>([]);
 
   const onSuccessQuery = (filterData: Filters) => {
@@ -37,7 +41,7 @@ const ProductFilter: React.FC<Props> = ({
       [
         {value: true, label: 'Available'},
         {value: false, label: 'Not available'},
-        {value: null, label: 'Any'},
+        {value: 'any', label: 'Any'},
       ]
     )
   };

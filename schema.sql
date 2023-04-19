@@ -7,7 +7,6 @@ CREATE TABLE IF NOT EXISTS user_ (
   email VARCHAR(200) NOT NULL UNIQUE,
   first_name VARCHAR(50) NOT NULL,
   last_name VARCHAR(50),
-  age SMALLINT NOT NULL,
   password VARCHAR(200) NOT NULL,
   role SMALLINT NOT NULL DEFAULT 1
 );
@@ -59,12 +58,11 @@ CREATE TABLE IF NOT EXISTS offender  (
 
 
 -- insert all type of users with hashed password 'password'
-INSERT INTO user_ (id, email, first_name, last_name, age, password, role) VALUES
-    (1, 'vladgasik@gmail.com', 'Vlad', null, 19, '$2b$12$TavDQGFdLErUW07extC4gOIjpJbJsvo0ehUBujXKzA7LfOuwvJu4G', 1),
-    (2, 'oleg.petrov@bsuir-lib.com', 'Oleg', 'Petrov', 21, '$2b$12$TavDQGFdLErUW07extC4gOIjpJbJsvo0ehUBujXKzA7LfOuwvJu4G', 2),
-    (3, 'admin@bsuir-admin.com', 'Admin', null, 14, '$2b$12$TavDQGFdLErUW07extC4gOIjpJbJsvo0ehUBujXKzA7LfOuwvJu4G', 3),
-
-    (4, 'thief@mail.ru', 'Pawel', 'Ivanov', 18, '$2b$12$TavDQGFdLErUW07extC4gOIjpJbJsvo0ehUBujXKzA7LfOuwvJu4G', 1)
+INSERT INTO user_ (id, email, first_name, last_name, password, role) VALUES
+    (1, 'vladgasik@gmail.com', 'Vlad', null, '$2b$12$TavDQGFdLErUW07extC4gOIjpJbJsvo0ehUBujXKzA7LfOuwvJu4G', 1),
+    (2, 'oleg.petrov@bsuir-lib.com', 'Oleg', 'Petrov', '$2b$12$TavDQGFdLErUW07extC4gOIjpJbJsvo0ehUBujXKzA7LfOuwvJu4G', 2),
+    (3, 'admin@bsuir-admin.com', 'Admin', null, '$2b$12$TavDQGFdLErUW07extC4gOIjpJbJsvo0ehUBujXKzA7LfOuwvJu4G', 3),
+    (4, 'thief@mail.ru', 'Pawel', 'Ivanov', '$2b$12$TavDQGFdLErUW07extC4gOIjpJbJsvo0ehUBujXKzA7LfOuwvJu4G', 1)
 ;
 
 -- insert some books

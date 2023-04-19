@@ -80,7 +80,7 @@ export function flattenFilters(
       );
     } else {
       const shouldAdd =
-        !dropEmpty || (Array.isArray(value) ? value.length > 0 : (value !== undefined && value !== null));
+        !dropEmpty || (Array.isArray(value) ? value.length > 0 : (value !== undefined && value !== 'any'));
       if (shouldAdd) {
         acc[newKey] = Array.isArray(value) ? value : String(value);
       }
