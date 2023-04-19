@@ -24,8 +24,8 @@ const Profile = () => {
   } = useForm<ProfileEditSchema>({
     resolver: zodResolver(profileEditSchema),
     defaultValues: {
-      firstName: user?.firstName,
-      lastName: user?.lastName,
+      firstName: user?.first_name,
+      lastName: user?.last_name,
       email: user?.email,
     },
   });

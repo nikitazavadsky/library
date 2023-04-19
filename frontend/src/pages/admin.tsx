@@ -251,10 +251,7 @@ export default function AdminPage() {
       <DevTool control={control} />
       <div className="m-12 bg-base-300 p-8">
         <div className="flex flex-col items-end gap-4">
-          <button
-            className="btn-info btn"
-            onClick={handleDownloadAnalytics}
-          >
+          <button className="btn-info btn" onClick={handleDownloadAnalytics}>
             Download Analytics
           </button>
           <input
@@ -318,7 +315,7 @@ export default function AdminPage() {
                 <tr key={user.id}>
                   <td>{user.id}</td>
                   <td>
-                    {user.firstName} {user.lastName}
+                    {user.first_name} {user.last_name}
                   </td>
                   <td>{user.email}</td>
                   <td>{user.phone}</td>

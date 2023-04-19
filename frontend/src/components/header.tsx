@@ -86,7 +86,7 @@ export default function Header() {
         <div className="toast-end toast absolute z-50">
           <div className="alert alert-success">
             <div>
-              <span>Welcome back, {user?.firstName ?? "customer!"}</span>
+              <span>Welcome back, {user?.first_name ?? "customer!"}</span>
             </div>
           </div>
         </div>
