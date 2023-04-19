@@ -24,4 +24,4 @@ export const signUpSchema = z
     path: ["repeatPassword"],
   });
 
-export type SignUpFields = z.infer<typeof signUpSchema> | Record<string, never>;
+export type SignUpFields = z.infer<typeof signUpSchema>;

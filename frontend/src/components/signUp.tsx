@@ -63,16 +63,6 @@ export default function SignUp({ children }: { children?: React.ReactNode }) {
             />
             <ErrorMessage error={errors.lastName?.message} />
             <label className="label">
-              <span className="label-text">Phone</span>
-            </label>
-            <input
-              {...register("phone")}
-              type="text"
-              placeholder="Enter your phone"
-              className="input-bordered input-primary input w-full"
-            />
-            <ErrorMessage error={errors.phone?.message} />
-            <label className="label">
               <span className="label-text">Email</span>
             </label>
             <input
