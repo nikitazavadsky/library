@@ -47,7 +47,7 @@ export default function Header() {
                   className="h-10 w-auto"
                   width={40}
                   height={40}
-                  src="/favicon.ico"
+                  src="/book.png"
                   alt="Logo icon"
                 />
               </Link>

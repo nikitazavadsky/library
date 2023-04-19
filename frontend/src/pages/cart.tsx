@@ -7,8 +7,6 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import useCartStore from "../stores/cart";
 
-const NUMBERS_AFTER_DECIMAL = 2;
-
 const Cart: NextPage = () => {
   const items = useCartStore((state) => state.items);
   const [isHydrated, setIsHydrated] = useState(false);
@@ -24,10 +22,6 @@ const Cart: NextPage = () => {
   const removeItem = useCartStore((state) => state.removeItem);
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 
-  const totalPrice = items
-    .reduce((total, item) => total + item.price * item.quantity, 0)
-    .toFixed(NUMBERS_AFTER_DECIMAL);
-
   const onSuccessfulCheckout = () => {
     clearCart();
     void router.push("/home");
@@ -36,14 +30,8 @@ const Cart: NextPage = () => {
   const cartMutation = useCheckoutMutation(onSuccessfulCheckout);
 
   const handleCheckout = () => {
-    const preparedItems = items.map((item) => ({
-      item_id: item.id,
-      quantity: item.quantity,
-    }));
-    const preparedCart = {
-      items: preparedItems,
-      total: parseFloat(totalPrice),
-    };
+    const preparedItems = items.map((item) => (item.id));
+    const preparedCart = preparedItems;
 
     cartMutation.mutate(preparedCart);
   };
@@ -58,7 +46,7 @@ const Cart: NextPage = () => {
         <title>{`Cart (${items.length})`}</title>
       </Head>
       <div className="mx-16 p-4">
-        <h2 className="mb-4 text-xl font-bold">Shopping Cart</h2>
+        <h2 className="mb-4 text-xl font-bold">Books to request</h2>
         {items.length === 0 ? (
           <p>Your cart is empty.</p>
         ) : (
@@ -69,12 +57,9 @@ const Cart: NextPage = () => {
                 className="mb-2 flex items-center justify-between"
               >
                 <p>
-                  {item.name}{" "}
-                  <span className="font-bold">x {item.quantity}</span>
+                  {item.title}{" "}{item.authors[0]?.first_name[0]}{". "}{item.authors[0]?.last_name}
                 </p>
                 <p>
-                  {(item.price * item.quantity).toFixed(NUMBERS_AFTER_DECIMAL)}{" "}
-                  BYN
                   <button
                     className="ml-4 rounded bg-error px-1 font-bold text-white"
                     onClick={() => removeItem(item.id)}
@@ -86,8 +71,8 @@ const Cart: NextPage = () => {
             ))}
             <hr className="my-2" />
             <div className="flex items-center justify-end">
-              <p className="mr-2 font-bold">Total:</p>
-              <p className="font-bold">{totalPrice} BYN</p>
+              <p className="mr-2 font-bold">Total books:</p>
+              <p className="font-bold">{items.length}</p>
             </div>
             <div className="ml-auto w-fit">
               <button
@@ -100,13 +85,13 @@ const Cart: NextPage = () => {
                   handleCheckout();
                 }}
               >
-                Checkout
+                Request Books
               </button>
               <button
                 className="btn-error btn rounded px-4 py-2"
                 onClick={clearCart}
               >
-                Clear Cart
+                Clear Wishlist
               </button>
             </div>
           </>

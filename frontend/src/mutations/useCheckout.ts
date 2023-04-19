@@ -1,10 +1,9 @@
 import { type BasicError } from "@/schemas/authSchema";
-import { type PreparedCart } from "@/schemas/cartSchema";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 
 export default function useCheckoutMutation(handleSuccess: () => void) {
-  const checkoutQueryFn = (checkoutData: PreparedCart) =>
+  const checkoutQueryFn = (checkoutData: number[]) =>
     axios
       .post(`orders`, checkoutData)
       .then((res) => res.data as string)
@@ -16,7 +15,7 @@ export default function useCheckoutMutation(handleSuccess: () => void) {
         }
       });
 
-  return useMutation<string, Error, PreparedCart>({
+  return useMutation<string, Error, number[]>({
     mutationFn: (checkoutData) => checkoutQueryFn(checkoutData),
     onSuccess: () => {
       handleSuccess();

@@ -31,7 +31,7 @@ const useCartStore = create<CartState>()(
         items: [],
         addItem: (item) =>
           set((state) => {
-              return { items: state.items.concat({ ...item, quantity: 1 }) };
+              return { items: state.items.concat({ ...item}) };
           }),
 
         removeItem: (itemId) =>
