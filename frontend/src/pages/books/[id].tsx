@@ -181,7 +181,7 @@ const ItemPage = ({
           </thead>
           <tr className="bg-base-100">
             <td>{item.num_pages}</td>
-            <td>{item.isbn} ml</td>
+            <td>{item.isbn}</td>
           </tr>
         </table>
         <p className="my-4 flex items-center justify-end text-xl font-semibold md:text-2xl">

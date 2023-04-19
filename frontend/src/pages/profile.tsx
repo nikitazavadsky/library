@@ -42,7 +42,7 @@ const Profile = () => {
 
   const [showEditForm, setShowEditForm] = useState<boolean>(false);
 
-  const { isLoading, isError, error } = useUserQuery(user?.id);
+  const { isLoading, isError, error } = useUserQuery();
 
   if (isLoading || !isRehydrated) return <Loader />;
 

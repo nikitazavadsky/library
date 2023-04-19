@@ -5,14 +5,14 @@ import axios from "axios";
 
 type UserResponse = Omit<User, "id" | "role">;
 
-export function useUserQuery(userId?: number) {
+export function useUserQuery() {
   const user = useAuthStore((state) => state.user);
-  const getUserQueryFn = (userId: number) =>
-    axios.get<UserResponse>(`users/${userId}`);
+  const getUserQueryFn = () =>
+    axios.get<UserResponse>(`users/me`);
 
   return useQuery({
-    queryKey: ["getUser", userId],
-    queryFn: (ctx) => getUserQueryFn(ctx.queryKey[1] as number),
+    queryKey: ["getUser"],
+    queryFn: () => getUserQueryFn(),
     enabled: user?.role != FAKE_ROLE,
     refetchOnWindowFocus: false,
   });
