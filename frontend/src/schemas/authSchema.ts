@@ -9,9 +9,7 @@ export const signInSchema = z.object({
   password: z.string().min(1, "Must not be empty"),
 });
 
-export const signInSchemaWithPhone = signInSchema.omit({ email: true });
-export type SignInFieldsWithPhone = z.infer<typeof signInSchemaWithPhone>;
-export type SignInFieldsWithEmail = z.infer<typeof signInSchema>;
+export type SignInFields = z.infer<typeof signInSchema>;
 
 export const signUpSchema = z
   .object({

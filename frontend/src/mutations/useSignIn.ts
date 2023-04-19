@@ -1,4 +1,3 @@
-import { USER_ROLE } from "@/constants/roles";
 import { type BasicError, type SignInFields } from "@/schemas/authSchema";
 import { useAuthStore, type User } from "@/stores/auth";
 import { useMutation } from "@tanstack/react-query";
@@ -9,10 +8,8 @@ export default function useSignInMutation(handleSuccess: () => void) {
 
   const fetchUserRole = async () => {
     try {
-      const response = await axios.get<{ msg: "ADMIN" | "USER" }>(
-        "/users/role"
-      );
-      return response.data.msg;
+      const response = await axios.get<User>("/users/me");
+      return response.data;
     } catch (error) {
       console.error("Error fetching user role:", error);
     }
@@ -20,10 +17,13 @@ export default function useSignInMutation(handleSuccess: () => void) {
 
   const signInQueryFn = (signInData: SignInFields) =>
     axios
-      .post<Omit<User, "role">>(`signin`, signInData)
+      .post<{ refresh: string; access: string }>(`login`, signInData)
       .then(async (res) => {
-        const role = (await fetchUserRole()) || USER_ROLE;
-        setUser(res.data, role);
+        axios.defaults.headers.common.Authorization = `Bearer ${res.data.access}`;
+        const user = await fetchUserRole();
+        if (user) {
+          setUser(user, user?.role);
+        }
       })
       .catch((err) => {
         if (axios.isAxiosError<BasicError>(err)) {

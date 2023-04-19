@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { type SignInFields, signInSchemaWithEmail } from "@/schemas/authSchema";
+import { type SignInFields, signInSchema } from "@/schemas/authSchema";
 import ErrorMessage from "./errorMessage";
 import { useState } from "react";
 import useSignInMutation from "@/mutations/useSignIn";
@@ -19,7 +19,7 @@ export default function SignIn({ children, showSuccessMessage }: Props) {
     handleSubmit,
     formState: { errors },
   } = useForm<SignInFields>({
-    resolver: zodResolver(signInSchemaWithEmail),
+    resolver: zodResolver(signInSchema),
   });
 
   const handleSuccess = () => {
