@@ -48,7 +48,7 @@ const Cart: NextPage = () => {
       <div className="mx-16 p-4">
         <h2 className="mb-4 text-xl font-bold">Books to request</h2>
         {items.length === 0 ? (
-          <p>Your cart is empty.</p>
+          <p>No books to request</p>
         ) : (
           <>
             {items.map((item) => (

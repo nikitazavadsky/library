@@ -24,7 +24,7 @@ export default function OrderTable({
           <th>Order ID</th>
           {isAdmin && <th>Full Name</th>}
           {/* <th>Status</th> */}
-          <th>Total Cost</th>
+          <th>Book Title</th>
           <th>Created At</th>
           {isAdmin && <th>Actions</th>}
         </tr>
@@ -38,8 +38,7 @@ export default function OrderTable({
                 {order.firstName} {order.lastName}
               </td>
             )}
-            {/* <td>{ORDER_STATUS_MAP[order.status]}</td> */}
-            <td>{order.total}</td>
+            <td>{ORDER_STATUS_MAP[order.status]}</td>
             <td>{order.createdAt}</td>
             {isAdmin && (
               <td className="flex justify-between">

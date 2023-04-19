@@ -5,11 +5,7 @@ import axios from "axios";
 
 export interface OrdersData {
   id: number;
-  firstName: string;
-  lastName: string;
   status: keyof typeof ORDER_STATUS_MAP;
-  userId: string;
-  total: number;
   createdAt: string;
 }
 
@@ -30,7 +26,7 @@ export function useMyOrdersQuery() {
   const userId = useAuthStore((state) => state.user?.id)
   const getMyOrdersQueryFn = () =>
     axios
-      .get<{ data: OrdersData[]; nextCursor: number }>(`user/${userId}/orders`)
+      .get<{ data: OrdersData[]; nextCursor: number }>(`orders/`)
       .then((res) => res.data);
 
   return useQuery({
