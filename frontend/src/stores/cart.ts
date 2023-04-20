@@ -13,7 +13,7 @@ type CartItem = {
   id: number;
   title: string;
   isbn: number;
-  numPages: number;
+  num_pages: number;
   authors: Author[];
 };
 
