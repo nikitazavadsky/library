@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export type BasicError = {
-  message: string;
+  detail: string;
 };
 
 export const signInSchema = z.object({
