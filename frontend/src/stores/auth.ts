@@ -2,7 +2,7 @@ import {
   ADMIN_ROLE,
   type USER_ROLE,
   FAKE_ROLE,
-  type LIBRARIAN_ROLE,
+  LIBRARIAN_ROLE,
 } from "@/constants/roles";
 import { env } from "@/env.mjs";
 import router from "next/router";
@@ -59,7 +59,9 @@ const useAuthStore = create<AuthStore>()(
         isAdmin: () => {
           if (get().user) {
             return (
-              get().user?.role === ADMIN_ROLE || get().user?.role === FAKE_ROLE
+              get().user?.role === ADMIN_ROLE ||
+              get().user?.role === FAKE_ROLE ||
+              get().user?.role === LIBRARIAN_ROLE
             );
           } else {
             return false;
