@@ -50,7 +50,7 @@ const ProductFilter: React.FC<Props> = ({
   return (
     <div className="border border-accent p-4 shadow-2xl md:mr-4">
       <div className="mb-4">
-        <h2 className="mb-8 text-center font-semibold">Price Range</h2>
+        <h2 className="mb-8 text-center font-semibold">Pages</h2>
         <RangeSlider
           defaultValue={pageNumRange}
           value={pageNumRange}
