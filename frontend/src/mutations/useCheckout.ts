@@ -9,7 +9,8 @@ export default function useCheckoutMutation(handleSuccess: () => void) {
       .then((res) => res.data as string)
       .catch((err) => {
         if (axios.isAxiosError<BasicError>(err)) {
-          throw Error(err.response?.data.message);
+          console.log(err);
+          throw Error(err.response?.data?.detail);
         } else {
           throw Error("Unexpected error");
         }

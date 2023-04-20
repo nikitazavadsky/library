@@ -6,6 +6,7 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import useCartStore from "../stores/cart";
+import ErrorMessage from "@/components/errorMessage";
 
 const Cart: NextPage = () => {
   const items = useCartStore((state) => state.items);
@@ -39,8 +40,6 @@ const Cart: NextPage = () => {
   if (!isHydrated) {
     return <Loader />;
   }
-
-  console.warn(items);
 
   return (
     <>
@@ -87,6 +86,9 @@ const Cart: NextPage = () => {
                 <p className="font-bold text-blue-700">{items.length}</p>
               </div>
             </div>
+            {cartMutation.isError && (
+              <ErrorMessage error={cartMutation.error.message} />
+            )}
             <hr className="my-4" />
             <div className="ml-auto w-fit">
               <button
