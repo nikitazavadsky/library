@@ -14,6 +14,7 @@ from app.crud import get_books_taken_by_user, get_cursor
 from app.models import (
     OrderDetailResponseModel,
     OrderResponseModel,
+    OrderResponseNewModel,
     OrderStatus,
     UserResponseModelExtended,
 )
@@ -33,7 +34,7 @@ order_router = APIRouter(tags=["order"])
     path="/",
     status_code=status.HTTP_200_OK,
     summary="List of user's orders.",
-    response_model=list[OrderResponseModel],
+    response_model=list[OrderResponseNewModel],
 )
 async def get_orders(
     state: str | None = None,
@@ -42,7 +43,12 @@ async def get_orders(
 ):
     status_list = generate_status_list(state) or list(OrderStatus)
 
-    sql = """SELECT * FROM order_ WHERE status = ANY(%s)"""
+    sql = """SELECT o.id, o.status, o.created_at, o.user_id, json_agg(b.*) AS requested_books
+                FROM order_ o
+                JOIN book_order bo ON o.id = bo.order_id
+                JOIN book b ON b.id = bo.book_id
+                WHERE status = ANY(%s)
+                """
     params: list[Any] = [
         status_list,
     ]
@@ -51,10 +57,15 @@ async def get_orders(
         sql += " AND user_id = %s"
         params.append(user.id)
 
+    sql += "\nGROUP BY o.id;"
+
     cursor.execute(sql, params)
     orders: list = cursor.fetchall()
 
-    return [OrderResponseModel(**order) for order in orders]  # type: ignore
+    print(sql)
+    print(orders)
+
+    return [OrderResponseNewModel(**order) for order in orders]  # type: ignore
 
 
 @order_router.post(
@@ -78,15 +89,23 @@ async def create_order(
     validate_user_book_count(user_books, books_ids)
 
     cursor.execute(
-        """INSERT INTO order_ (created_at, user_id, status, requested_books) VALUES(%s, %s, %s, %s) RETURNING id""",
-        (datetime.now(tz=timezone.utc), user.id, OrderStatus.PENDING, ",".join([str(i) for i in [1, 2, 3]])),
+        """INSERT INTO order_ (created_at, user_id, status) VALUES(%s, %s, %s) RETURNING id""",
+        (datetime.now(tz=timezone.utc), user.id, OrderStatus.PENDING),
     )
 
     record = cursor.fetchone()
     if not record:
         raise DatabaseException
 
-    return {"order_id": record[0]}  # Order successfully created! Your order number is: ...
+    order_id = record[0]
+    
+    book_order_values = [(order_id, book_id, datetime.now(tz=timezone.utc)) for book_id in books_ids]
+    cursor.executemany(
+        "INSERT INTO book_order (order_id, book_id, date_start) VALUES (%s, %s, %s)",
+        book_order_values
+    )
+
+    return {"order_id": order_id}  # Order successfully created! Your order number is: ...
 
 
 @order_router.get(

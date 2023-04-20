@@ -4,6 +4,7 @@ import {
   useMoveOrderMutation,
 } from "@/mutations/useOrders";
 import { type OrdersData } from "@/queries/useOrders";
+import Link from "next/link";
 
 export default function OrderTable({
   ordersData,
@@ -23,8 +24,8 @@ export default function OrderTable({
         <tr>
           <th>Order ID</th>
           {isAdmin && <th>Full Name</th>}
-          {/* <th>Status</th> */}
-          <th>Book Title</th>
+          <th>Books</th>
+          <th>Order Status</th>
           <th>Created At</th>
           {isAdmin && <th>Actions</th>}
         </tr>
@@ -38,8 +39,17 @@ export default function OrderTable({
                 {order.firstName} {order.lastName}
               </td>
             )}
+            <td>
+              <ul>
+                {order.requested_books.map(book => (
+                  <Link href={`books/${book.id}`}>
+                    <li key={book.id} className='link-hover'>{book.title}</li>
+                  </Link>
+                ))}
+              </ul>
+            </td>
             <td>{ORDER_STATUS_MAP[order.status]}</td>
-            <td>{order.createdAt}</td>
+            <td>{order.created_at}</td>
             {isAdmin && (
               <td className="flex justify-between">
                 {/* {order.status === "IN_PROCESSING" && (

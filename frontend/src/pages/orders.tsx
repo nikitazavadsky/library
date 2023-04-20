@@ -14,7 +14,7 @@ export default function MyOrdersPage() {
       </Head>
       <Container>
         <Paper className="my-8 p-6">
-          <OrderTable ordersData={ordersData?.data} isAdmin={false} />
+          <OrderTable ordersData={ordersData} isAdmin={false} />
         </Paper>
       </Container>
     </>

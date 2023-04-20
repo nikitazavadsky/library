@@ -3,7 +3,7 @@ export const APPROVED = "APPROVED";
 export const REJECTED = "REJECTED";
 
 export const ORDER_STATUS_MAP = {
-  [PENDING]: "In processing",
+  [PENDING]: "Pending",
   [APPROVED]: "Approved",
   [REJECTED]: "Rejected"
 } as const;
