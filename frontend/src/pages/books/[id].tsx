@@ -144,9 +144,6 @@ const ItemPage = ({
         defaultValue={item?.image_url ? item?.image_url : NO_IMAGE_LINK}
       />
       <ErrorMessage error={errors.image_url?.message} />
-      <span className="text-xs">
-        You can leave image URL empty if you want to use placeholder image!
-      </span>
       {editItemMutation.isPending && <Loader />}
       {editItemMutation.isError && (
         <ErrorMessage error={editItemMutation.error.message} />

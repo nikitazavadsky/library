@@ -22,7 +22,8 @@ CREATE TABLE IF NOT EXISTS book (
   id BIGSERIAL PRIMARY KEY,
   title VARCHAR(50) NOT NULL,
   isbn VARCHAR(50) NOT NULL,
-  num_pages BIGINT NOT NULL
+  num_pages BIGINT NOT NULL,
+  image_url TEXT DEFAULT 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT3u0UEA-Gfpsphl2gdxxbhnVoJ1NP_o0LV3Q&usqp=CAU'
 );
 CREATE TABLE IF NOT EXISTS book_author (
   id BIGSERIAL PRIMARY KEY,
