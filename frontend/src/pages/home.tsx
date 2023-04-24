@@ -3,7 +3,7 @@ import { type NextPage } from "next";
 import { useState } from "react";
 import ItemCard from "@/components/itemCard";
 import ProductFilter from "@/components/productFilter";
-import { useApplyFiltersQuery, useItemsQuery } from "@/queries/useItems";
+import { useApplyFiltersQuery, useItemsQuery, useUnavailableItemsQuery } from "@/queries/useItems";
 import Loader from "@/components/loader";
 import { flattenFilters } from "@/utils/objectHelpers";
 
@@ -12,6 +12,8 @@ const Home: NextPage = () => {
   const [isFiltered, setIsFiltered] = useState(false);
 
   const { data: allItems, isLoading: isLoadingAllItems } = useItemsQuery();
+  const { data: allUnavailableItems, isLoading: isLoadingAllUnavailableItems } = useUnavailableItemsQuery();
+
   const {
     data: filteredItems,
     isLoading: isLoadingFilteredItems,
@@ -39,7 +41,7 @@ const Home: NextPage = () => {
   };
 
   const items = isFiltered ? filteredItems : allItems;
-  const isLoading = isFiltered ? isLoadingFilteredItems : isLoadingAllItems;
+  const isLoading = isFiltered ? isLoadingFilteredItems : isLoadingAllItems && isLoadingAllUnavailableItems;
 
   return (
     <>
@@ -54,42 +56,13 @@ const Home: NextPage = () => {
             />
         </div>
         <div className="col-span-1 md:col-span-2 lg:col-span-3">
-          {/* TEST ITEM */}
-          {/* <ItemCard
-            item={{
-              id: 1,
-              category: "Laptop",
-              manufacturer: "Apple",
-              complectations: [
-                {
-                  id: 1,
-                  description: 'Apple MacBook Pro 13.3" 2020 M1 8GB 256GB',
-                  price: 1000,
-                  model: "Apple MacBook Pro 13.3",
-                },
-                {
-                  id: 2,
-                  description: 'Apple MacBook Pro 13.3" 2020 M1 8GB 512GB',
-                  price: 1200,
-                  model: "Apple MacBook Pro 13.3",
-                },
-                {
-                  id: 3,
-                  description: 'Apple MacBook Pro 13.3" 2020 M1 16GB 512GB',
-                  price: 1400,
-                  model: "Apple MacBook Pro 13.3",
-                },
-              ],
-              imageUrl: NO_IMAGE_LINK,
-            }}
-          /> */}
           {isLoading ? (
             <Loader />
           ) : (
             items?.length !== 0 ? (
             <div className="grid grid-cols-1 gap-4">
               {items?.map((item) => (
-                <ItemCard key={item.id} item={item} />
+                <ItemCard key={item.id} item={item} disabled={allUnavailableItems ? allUnavailableItems?.some(currentItem => currentItem.id === item.id) : false}/>
               ))}
             </div>
           ) : (

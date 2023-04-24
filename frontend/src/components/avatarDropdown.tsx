@@ -41,7 +41,7 @@ const AvatarDropdown = () => {
             }
           }}
         >
-          <Link href={"/orders"}>My Orders</Link>
+          <Link href={"/orders"}>My Book Requests</Link>
         </li>
         {isAdmin && (
           <li

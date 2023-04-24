@@ -166,24 +166,25 @@ def filter_books(cursor: psycopg2.extensions.cursor, search_params: dict) -> lis
                 ) AS sub ON book.id = sub.id
             """
 
-        FILTER_QUERY = FILTER_QUERY + "\n WHERE "
+        if is_available != None and len(search_params) != 1:
+            FILTER_QUERY = FILTER_QUERY + "\n WHERE "
 
-        query_params = []
+            query_params = []
 
-        for key, value in search_params.items():
-            if isinstance(value, str):
-                value = value.split(",")
-            if key == 'min':
-                query_params.append(f"book.num_pages >= {value}")
-            elif key == 'max':
-                query_params.append(f"book.num_pages <= {value}")
-            elif isinstance(value, list) and key == "authors":
-                values_as_str = ",".join([f"{v}" for v in value])
-                query_params.append(f"book_author.author_id IN ({values_as_str})")
-            elif not isinstance(value, list) and key == "authors":
-                query_params.append(f"book_author.author_id = '{value}'")
+            for key, value in search_params.items():
+                if isinstance(value, str):
+                    value = value.split(",")
+                if key == 'min':
+                    query_params.append(f"book.num_pages >= {value}")
+                elif key == 'max':
+                    query_params.append(f"book.num_pages <= {value}")
+                elif isinstance(value, list) and key == "authors":
+                    values_as_str = ",".join([f"{v}" for v in value])
+                    query_params.append(f"book_author.author_id IN ({values_as_str})")
+                elif not isinstance(value, list) and key == "authors":
+                    query_params.append(f"book_author.author_id = '{value}'")
 
-        FILTER_QUERY += " AND ".join(query_params)
+            FILTER_QUERY += " AND ".join(query_params)
 
     return _get_books(cursor, FILTER_QUERY)
 

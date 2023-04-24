@@ -24,10 +24,6 @@ def generate_report(cursor: psycopg2.extensions.cursor, save_path: str) -> None:
         p.add_run(str(avg_book_returnment_time.seconds // 3600)).bold = True
         p.add_run(" ч.")
 
-    p = document.add_paragraph("Средний возраст читателя составляет ")
-    p.add_run(str(get_average_reader_age(cursor))).bold = True
-    p.add_run(" лет.")
-
     book_to_quantity = get_most_popular_books(cursor)
     plt_save_path = f"{save_path}.jpg"
 
@@ -71,15 +67,6 @@ def generate_report(cursor: psycopg2.extensions.cursor, save_path: str) -> None:
 
 def get_average_returnment_time(cursor: psycopg2.extensions.cursor) -> timedelta | None:
     cursor.execute("""SELECT AVG(age(date_finished, date_start)) FROM book_order WHERE date_finished IS NOT NULL""")
-    record = cursor.fetchone()
-    if not record:
-        raise NotFoundException
-
-    return record[0]
-
-
-def get_average_reader_age(cursor: psycopg2.extensions.cursor) -> float | None:
-    cursor.execute("""SELECT ROUND(AVG(age), 1) FROM user_ WHERE role = 1""")
     record = cursor.fetchone()
     if not record:
         raise NotFoundException

@@ -21,8 +21,8 @@ export function useUserQuery() {
 export function useAllUsersQuery() {
   const getAllUsersQueryFn = () =>
     axios
-      .get<{ data: Omit<User, "role">[]; nextCursor: number }>(`users`)
-      .then((res) => res.data);
+      .get<Omit<User, "role">[]>(`users/`)
+      .then((res) => res);
 
   return useQuery({
     queryKey: ["getAllUsers"],

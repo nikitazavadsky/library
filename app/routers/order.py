@@ -43,10 +43,11 @@ async def get_orders(
 ):
     status_list = generate_status_list(state) or list(OrderStatus)
 
-    sql = """SELECT o.id, o.status, o.created_at, o.user_id, json_agg(b.*) AS requested_books
+    sql = """SELECT o.id, o.status, o.created_at, u.first_name, u.last_name, json_agg(b.*) AS requested_books
                 FROM order_ o
                 JOIN book_order bo ON o.id = bo.order_id
                 JOIN book b ON b.id = bo.book_id
+                JOIN user_ u ON o.user_id = u.id
                 WHERE status = ANY(%s)
                 """
     params: list[Any] = [
@@ -57,7 +58,7 @@ async def get_orders(
         sql += " AND user_id = %s"
         params.append(user.id)
 
-    sql += "\nGROUP BY o.id;"
+    sql += "\nGROUP BY o.id, u.first_name, u.last_name;"
 
     cursor.execute(sql, params)
     orders: list = cursor.fetchall()

@@ -15,6 +15,19 @@ export function useItemsQuery() {
   });
 }
 
+export function useUnavailableItemsQuery() {
+  const getItemQueryFn = () =>
+    axios
+      .get<Item[]>("books/?availability=false")
+      .then((res) => res.data);
+
+  return useQuery({
+    queryKey: ["getUnavailableItems"],
+    queryFn: () => getItemQueryFn(),
+    refetchOnWindowFocus: false,
+  });
+}
+
 export function useApplyFiltersQuery(params?: URLSearchParams) {
   const getApplyFiltersQueryFn = () =>
     axios

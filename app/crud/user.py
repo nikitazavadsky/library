@@ -28,6 +28,7 @@ def _get_user_objects(user_items) -> list[UserResponseModelExtended]:
 
 
 def get_users_except_admins(cursor: psycopg2.extensions.cursor) -> list[UserResponseModelExtended]:
+    print("Getting users except admins")
     cursor.execute(f"""{USER_SQL} WHERE role != %s""", (UserRole.ADMIN,))
 
     if user_items := cursor.fetchall():
@@ -38,8 +39,9 @@ def get_users_except_admins(cursor: psycopg2.extensions.cursor) -> list[UserResp
 
 def get_users(cursor: psycopg2.extensions.cursor) -> list[UserResponseModelExtended]:
     cursor.execute(USER_SQL)
-
+    print(f"Getting all users")
     if user_items := cursor.fetchall():
+        print(f"All users: {user_items}")
         return _get_user_objects(user_items)
 
     return []

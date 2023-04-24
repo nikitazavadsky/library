@@ -30,14 +30,18 @@ def _get_authorization_token(authorization: str = Header(...)):
 def get_current_user(
     cursor: psycopg2.extensions.cursor = Depends(get_cursor),
     token: str = Depends(_get_authorization_token),
-):
+):  
+    
     payload = decode_access_token(token)
     user_email = payload["email"]
-
+    print(f"Execute query: {'SELECT id, email, first_name, last_name, role FROM user_ WHERE email = '}{user_email}")
     cursor.execute("""SELECT id, email, first_name, last_name, role FROM user_ WHERE email = %s""", (user_email,))
 
     user_item = cursor.fetchone()
+
+    print(f"Result user: {user_item}")
     if not user_item:
+        print(f"No user was found")
         raise NotFoundException
 
     return get_user_object(user_item)

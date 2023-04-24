@@ -8,7 +8,7 @@ import { useState } from "react";
 export const NO_IMAGE_LINK =
   "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT3u0UEA-Gfpsphl2gdxxbhnVoJ1NP_o0LV3Q&usqp=CAU";
 
-export default function ItemCard({ item }: { item: Item }) {
+export default function ItemCard({ item, disabled }: { item: Item, disabled: boolean }) {
   const [showError, setShowError] = useState(false);
   const addToCart = useCartStore((state) => state.addItem);
 
@@ -53,6 +53,8 @@ export default function ItemCard({ item }: { item: Item }) {
             {!showError ? (
               <button
                 className="btn-primary btn"
+                disabled={disabled}
+                title={disabled ? "Unfortunately, this book is currently unavailable" : undefined}
                 onClick={() => {
                   handleDataSubmit(item);
                 }}

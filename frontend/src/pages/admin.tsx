@@ -17,7 +17,7 @@ import Loader from "@/components/loader";
 
 async function handleDownloadAnalytics() {
   try {
-    const response = await axios.get("analytics", {
+    const response = await axios.get("analytics/report", {
       responseType: "blob",
     });
 
@@ -27,7 +27,7 @@ async function handleDownloadAnalytics() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "app-analytics.pdf";
+    a.download = "app-analytics.docx";
     document.body.appendChild(a);
     a.click();
     a.remove();
@@ -143,114 +143,9 @@ export default function AdminPage() {
           in or make any orders.
         </p>
       </BaseModal>
-      <BaseModal
-        visible={openCreateItemModal}
-        closeModal={() => setOpenCreateItemModal(!openCreateItemModal)}
-        modalId="create-item-modal"
-        title={`Creating new item`}
-        titleClassname="text-2xl font-extrabold text-success"
-        modalAction={
-          <>
-            <button
-              type="button"
-              className="btn-success btn"
-              onClick={handleCreate}
-            >
-              Create item
-            </button>
-            <button
-              type="button"
-              className="btn-warning btn"
-              onClick={() => setOpenCreateItemModal(false)}
-            >
-              Cancel
-            </button>
-          </>
-        }
-      >
-        <p>
-          Item will be added to the database. On successful creation you will be
-          redirected to item page, so you can see your result and adjust details
-          if needed.
-        </p>
-        <form
-          ref={formRef}
-          className="form-control"
-          onSubmit={handleSubmit(onSuccessCreate)}
-        >
-          <label className="label">
-            <span className="label-text">Category</span>
-          </label>
-          <input
-            {...register("category")}
-            type="text"
-            placeholder="Enter category of the item"
-            className="input-bordered input-primary input w-full"
-          />
-          <ErrorMessage error={errors.category?.message} />
-          <label className="label">
-            <span className="label-text">Manufacturer</span>
-          </label>
-          <input
-            {...register("manufacturer")}
-            type="text"
-            placeholder="Enter manufacturer"
-            className="input-bordered input-primary input w-full"
-          />
-          <ErrorMessage error={errors.manufacturer?.message} />
-          <label className="label">
-            <span className="label-text">Model</span>
-          </label>
-          <input
-            {...register(`complectation.model`)}
-            type="text"
-            placeholder="Enter model name"
-            className="input-bordered input-primary input w-full"
-          />
-          <ErrorMessage error={errors.complectation?.model?.message} />
-          <label className="label">
-            <span className="label-text">Description</span>
-          </label>
-          <input
-            {...register(`complectation.description`)}
-            type="text"
-            placeholder="Enter description"
-            className="input-bordered input-primary input w-full"
-          />
-          <ErrorMessage error={errors.complectation?.description?.message} />
-          <label className="label">
-            <span className="label-text">Price</span>
-          </label>
-          <input
-            {...register("complectation.price", {
-              setValueAs: (value: string) => parseFloat(value),
-            })}
-            type="number"
-            placeholder="Enter price"
-            className="input-bordered input-primary input w-full"
-            min={0}
-            step={0.01}
-          />
-          <ErrorMessage error={errors.complectation?.price?.message} />
-          <label className="label">
-            <span className="label-text">Image URL</span>
-          </label>
-          <input
-            {...register("imageUrl")}
-            type="text"
-            placeholder="Enter image URL"
-            className="input-bordered input-primary input w-full"
-          />
-          <ErrorMessage error={errors.imageUrl?.message} />
-          {createItemMutation.isPending && <Loader />}
-          {createItemMutation.isError && (
-            <ErrorMessage error={createItemMutation.error.message} />
-          )}
-        </form>
-      </BaseModal>
       <DevTool control={control} />
       <div className="m-12 bg-base-300 p-8">
-        <div className="flex flex-col items-end gap-4">
+        <div className="flex flex-col gap-4 mb-5">
           <button className="btn-info btn" onClick={handleDownloadAnalytics}>
             Download Analytics
           </button>
@@ -268,12 +163,6 @@ export default function AdminPage() {
             }}
           >
             Bulk Load
-          </button>
-          <button
-            className="btn-warning btn"
-            onClick={() => setOpenCreateItemModal(true)}
-          >
-            Add one item
           </button>
         </div>
 

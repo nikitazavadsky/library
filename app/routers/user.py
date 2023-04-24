@@ -1,6 +1,8 @@
 import psycopg2.extensions
 from fastapi import APIRouter, Depends, status
 
+import logging
+
 from app.core.exceptions import ForbiddenException, NotFoundException
 from app.core.jwt import get_current_user
 from app.crud import (
@@ -23,6 +25,7 @@ from app.routers.order import approve_order, get_order, get_orders, reject_order
 from app.services import get_user_or_404
 
 user_router = APIRouter(tags=["user"])
+LOGGER = logging.getLogger(__name__)
 
 
 @user_router.get(
@@ -35,8 +38,11 @@ def get_all_users(
     cursor: psycopg2.extensions.cursor = Depends(get_cursor),
     user: UserResponseModelExtended = Depends(get_current_user),
 ):
+    LOGGER.debug(f"Current user: {user}")
+    LOGGER.debug(f"TEST")
+
     if user.is_reader:
-        raise NotFoundException
+        raise ForbiddenException
 
     if user.is_librarian:
         return get_users_except_admins(cursor)

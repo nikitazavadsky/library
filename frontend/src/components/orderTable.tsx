@@ -36,7 +36,7 @@ export default function OrderTable({
             <td>{order.id}</td>
             {isAdmin && (
               <td>
-                {order.firstName} {order.lastName}
+                {order.first_name} {order.last_name}
               </td>
             )}
             <td>

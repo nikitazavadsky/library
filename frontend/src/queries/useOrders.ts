@@ -7,6 +7,8 @@ import axios from "axios";
 export interface OrdersData {
   id: number;
   status: keyof typeof ORDER_STATUS_MAP;
+  first_name: string;
+  last_name: string;
   createdAt: string;
   requested_books: Omit<Item, "authors">[]
 }

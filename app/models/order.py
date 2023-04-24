@@ -24,6 +24,8 @@ class OrderResponseNewModel(BaseModel):
     id: int
     created_at: datetime
     status: OrderStatus
+    first_name: str
+    last_name: str
     requested_books: list[BookShort]
 
     class Config:
