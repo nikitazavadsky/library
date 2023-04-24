@@ -7,7 +7,7 @@ export default function useBlockUserMutation(handleSuccess: () => void) {
   const blockUserQueryFn = (userId: number) =>
     axios.delete(`users/${userId}`).catch((err) => {
       if (axios.isAxiosError<BasicError>(err)) {
-        throw Error(err.response?.data.message);
+        throw Error(err.response?.data.detail);
       } else {
         throw Error("Unexpected error");
       }

@@ -1,4 +1,4 @@
-import { type ChangeEvent, useState, useRef } from "react";
+import { type ChangeEvent, useState } from "react";
 import OrderTable from "@/components/orderTable";
 import { useOrdersQuery } from "@/queries/useOrders";
 import { useAllUsersQuery } from "../queries/useUser";
@@ -8,12 +8,9 @@ import useBlockUserMutation from "@/mutations/useUser";
 import { type ItemMutateSchema, itemMutateSchema } from "@/schemas/itemSchema";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useCreateItemMutation } from "@/mutations/useItem";
-import ErrorMessage from "@/components/errorMessage";
 import Head from "next/head";
 import { useAuthStore } from "@/stores/auth";
 import { DevTool } from "@hookform/devtools";
-import Loader from "@/components/loader";
 
 async function handleDownloadAnalytics() {
   try {
@@ -65,36 +62,13 @@ export default function AdminPage() {
   const [activeTab, setActiveTab] = useState<"orders" | "users">("orders");
   const [userIdToDelete, setUserIdToDelete] = useState<number | null>(null);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
-  const [openCreateItemModal, setOpenCreateItemModal] = useState(false);
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    control,
-  } = useForm<ItemMutateSchema>({
+
+  const { control } = useForm<ItemMutateSchema>({
     resolver: zodResolver(itemMutateSchema),
   });
 
-  const handleCreate = () => {
-    formRef.current?.dispatchEvent(
-      new Event("submit", { cancelable: true, bubbles: true })
-    );
-  };
   const { user } = useAuthStore();
   const currentUserEmail = user?.email;
-  const formRef = useRef<HTMLFormElement>(null);
-
-  const createItemMutation = useCreateItemMutation();
-  const onSuccessCreate = (values: ItemMutateSchema) => {
-    console.warn("values", values);
-    const { complectation, ...rest } = values;
-    const dataToSend = {
-      ...rest,
-      complectations: [complectation], // We do the rename here because BE expects different name
-    };
-    createItemMutation.mutate(dataToSend);
-    setOpenCreateItemModal(false);
-  };
 
   const blockUserMutation = useBlockUserMutation(() =>
     setOpenDeleteModal(false)
@@ -145,7 +119,7 @@ export default function AdminPage() {
       </BaseModal>
       <DevTool control={control} />
       <div className="m-12 bg-base-300 p-8">
-        <div className="flex flex-col gap-4 mb-5">
+        <div className="mb-5 flex flex-col gap-4">
           <button className="btn-info btn" onClick={handleDownloadAnalytics}>
             Download Analytics
           </button>
@@ -195,7 +169,6 @@ export default function AdminPage() {
                 <th>ID</th>
                 <th>Full Name</th>
                 <th>Email</th>
-                <th>Phone</th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -207,7 +180,6 @@ export default function AdminPage() {
                     {user.first_name} {user.last_name}
                   </td>
                   <td>{user.email}</td>
-                  <td>{user.phone}</td>
                   {user.email != currentUserEmail ? (
                     <td>
                       <button

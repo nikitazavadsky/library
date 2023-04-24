@@ -8,7 +8,7 @@ export function useMoveOrderMutation() {
     mutationFn: (orderId: number) =>
       axios.post(`orders/${orderId}/move-status`).catch((err) => {
         if (axios.isAxiosError<BasicError>(err)) {
-          throw Error(err.response?.data.message);
+          throw Error(err.response?.data.detail);
         } else {
           throw Error("Unexpected error");
         }
@@ -25,7 +25,7 @@ export function useRejectOrderMutation() {
     mutationFn: (orderId: number) =>
       axios.delete(`orders/${orderId}`).catch((err) => {
         if (axios.isAxiosError<BasicError>(err)) {
-          throw Error(err.response?.data.message);
+          throw Error(err.response?.data.detail);
         } else {
           throw Error("Unexpected error");
         }

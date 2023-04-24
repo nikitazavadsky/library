@@ -13,7 +13,6 @@ export default function OrderTable({
   ordersData: OrdersData[];
   isAdmin?: boolean;
 }) {
-  const moveOrderMutation = useMoveOrderMutation();
   const rejectOrderMutation = useRejectOrderMutation();
 
   if (!ordersData) return null;
@@ -41,9 +40,11 @@ export default function OrderTable({
             )}
             <td>
               <ul>
-                {order.requested_books.map(book => (
-                  <Link href={`books/${book.id}`}>
-                    <li key={book.id} className='link-hover'>{book.title}</li>
+                {order.requested_books.map((book) => (
+                  <Link key={book.id} href={`books/${book.id}`}>
+                    <li key={book.id} className="link-hover">
+                      {book.title}
+                    </li>
                   </Link>
                 ))}
               </ul>
@@ -77,10 +78,10 @@ export default function OrderTable({
                   </button>
                 )} */}
                 <button
-                      className="btn-error btn ml-auto"
-                      onClick={() => rejectOrderMutation.mutate(order.id)}
-                    >
-                      Reject
+                  className="btn-error btn ml-auto"
+                  onClick={() => rejectOrderMutation.mutate(order.id)}
+                >
+                  Reject
                 </button>
               </td>
             )}

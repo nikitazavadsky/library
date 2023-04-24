@@ -1,6 +1,5 @@
 import { type ORDER_STATUS_MAP } from "@/constants/orderStatusMap";
-import { Item } from "@/schemas/itemSchema";
-import { useAuthStore } from "@/stores/auth";
+import { type Item } from "@/schemas/itemSchema";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 
@@ -10,14 +9,12 @@ export interface OrdersData {
   first_name: string;
   last_name: string;
   createdAt: string;
-  requested_books: Omit<Item, "authors">[]
+  requested_books: Omit<Item, "authors">[];
 }
 
 export function useOrdersQuery() {
   const getAllOrdersQueryFn = () =>
-    axios
-      .get<OrdersData[]>("orders")
-      .then((res) => res);
+    axios.get<OrdersData[]>("orders").then((res) => res);
 
   return useQuery({
     queryKey: ["getOrders"],
@@ -27,7 +24,6 @@ export function useOrdersQuery() {
 }
 
 export function useMyOrdersQuery() {
-  const userId = useAuthStore((state) => state.user?.id)
   const getMyOrdersQueryFn = () =>
     axios
       .get<{ data: OrdersData[]; nextCursor: number }>(`orders/`)

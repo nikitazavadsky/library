@@ -13,7 +13,7 @@ export function useCreateItemMutation() {
       .then((res) => res.data as Item)
       .catch((err) => {
         if (axios.isAxiosError<BasicError>(err)) {
-          throw Error(err.response?.data.message);
+          throw Error(err.response?.data.detail);
         } else {
           throw Error("Unexpected error");
         }
@@ -33,7 +33,7 @@ export function useEditItemMutation(itemId: number) {
   const editItemQueryFn = (item: ItemFields) =>
     axios.put(`items/${itemId}`, item).catch((err) => {
       if (axios.isAxiosError<BasicError>(err)) {
-        throw Error(err.response?.data.message);
+        throw Error(err.response?.data.detail);
       } else {
         throw Error("Unexpected error");
       }
@@ -53,7 +53,7 @@ export function useDeleteItemMutation(itemId: number) {
   const deleteItemQueryFn = () =>
     axios.delete(`items/${itemId}`).catch((err) => {
       if (axios.isAxiosError<BasicError>(err)) {
-        throw Error(err.response?.data.message);
+        throw Error(err.response?.data.detail);
       } else {
         throw Error("Unexpected error");
       }
