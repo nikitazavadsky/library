@@ -21,6 +21,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { NO_IMAGE_LINK } from "@/components/itemCard";
 import useCartStore from "@/stores/cart";
 import { checkTruthy } from "@/utils/objectHelpers";
+import { MultiSelect } from "@mantine/core";
+import useFiltersQuery, { Filters } from "@/queries/useFilters";
 
 export const getServerSideProps: GetServerSideProps<{
   itemId: string;
@@ -35,6 +37,23 @@ const ItemPage = ({
 
   const [isRehydrated, setIsRehydrated] = useState(false);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
+
+  
+  const [authors, setAuthors] = useState<{ value: number; label: string }[]>([]);
+  const [selectedAuthors, setSelectedAuthors] = useState<{ value: number; label: string }[]>([]);
+
+  const onSuccessQuery = (filterData: Filters) => {
+    const { authors } = filterData;
+
+    setAuthors(
+      authors.map((author) => ({
+        value: author.id,
+        label: `${author.first_name} ${author.last_name}`,
+      }))
+    );
+  };
+
+  const { data: filters } = useFiltersQuery(onSuccessQuery);
 
   const isAdmin = useAuthStore((state) => state.isAdmin());
   const [isEditing, setIsEditing] = useState(false);
@@ -134,6 +153,18 @@ const ItemPage = ({
       />
       <ErrorMessage error={errors.num_pages?.message} />
       <label className="label">
+        <span className="label-text">Authors</span>
+      </label>
+      <MultiSelect
+          placeholder="Pick one or more"
+          searchable
+          value={selectedAuthors}
+          onChange={(value) => setSelectedAuthors(value)}
+          nothingFound="No options"
+          data={authors}
+        />
+      <ErrorMessage error={errors.num_pages?.message} />
+      <label className="label">
         <span className="label-text">Image URL</span>
       </label>
       <input
@@ -177,11 +208,13 @@ const ItemPage = ({
             <tr>
               <th>Pages</th>
               <th>ISBN</th>
+              <th>Authors</th>
             </tr>
           </thead>
           <tr className="bg-base-100">
             <td>{item.num_pages}</td>
             <td>{item.isbn}</td>
+            <td>{item.authors.map((author) => `${author.first_name[0]}. ${author.last_name} `)}</td>
           </tr>
         </table>
         <p className="my-4 flex items-center justify-end text-xl font-semibold md:text-2xl">
