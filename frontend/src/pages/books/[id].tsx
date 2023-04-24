@@ -38,34 +38,40 @@ const ItemPage = ({
   const [isRehydrated, setIsRehydrated] = useState(false);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
 
-  const [authors, setAuthors] = useState<{ value: string; label: string }[]>(
+  const [authors, setAuthors] = useState<{ value: number; label: string }[]>(
     []
   );
-  const [selectedAuthors, setSelectedAuthors] = useState<string[]>([]);
+  const [selectedAuthors, setSelectedAuthors] = useState<number[]>([]);
 
   const isAdmin = useAuthStore((state) => state.isAdmin());
   const [isEditing, setIsEditing] = useState(false);
 
-  const { data: item, isLoading, isError } = useItemQuery(itemId);
   const editItemMutation = useEditItemMutation(Number(itemId));
   const deleteItemMutation = useDeleteItemMutation(Number(itemId));
 
-  const onSuccessQuery = (filterData: Filters) => {
-    const { authors } = filterData;
+  const onSuccessQuery = (item: Item) => {
+    const { authors } = item;
 
     const authorsToSet = authors.map((author) => ({
       value: author.id,
       label: `${author.first_name} ${author.last_name}`,
     }));
 
-    const selectedAuthorsToSet = item?.authors.map((author) => ({
-      value: author.id,
-      label: `${author.first_name} ${author.last_name}`,
-    }));
+    const existingItem = itemSchema.parse(item);
+
+    const selectedAuthorsToSet = existingItem.authors.map(
+      (author) => author.id
+    );
 
     setAuthors(authorsToSet);
     setSelectedAuthors(selectedAuthorsToSet);
   };
+
+  const {
+    data: item,
+    isLoading,
+    isError,
+  } = useItemQuery(itemId, onSuccessQuery);
 
   const handleEdit = () => {
     if (isAdmin) {
@@ -166,8 +172,9 @@ const ItemPage = ({
         searchable
         nothingFound="No options"
         data={authors}
+        defaultValue={selectedAuthors}
         onChange={(value) => {
-          setSelectedAuthors(value);
+          setSelectedAuthors(value.map(Number));
         }}
       />
       <ErrorMessage error={errors.num_pages?.message} />
