@@ -15,14 +15,14 @@ import {
   useDeleteItemMutation,
   useEditItemMutation,
 } from "@/mutations/useItem";
-import { type ItemFields, itemSchema, Item } from "@/schemas/itemSchema";
+import { type ItemFields, itemSchema, type Item } from "@/schemas/itemSchema";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { NO_IMAGE_LINK } from "@/components/itemCard";
 import useCartStore from "@/stores/cart";
 import { checkTruthy } from "@/utils/objectHelpers";
 import { MultiSelect } from "@mantine/core";
-import useFiltersQuery, { Filters } from "@/queries/useFilters";
+import { type Filters } from "@/queries/useFilters";
 
 export const getServerSideProps: GetServerSideProps<{
   itemId: string;
@@ -38,9 +38,10 @@ const ItemPage = ({
   const [isRehydrated, setIsRehydrated] = useState(false);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
 
-  
-  const [authors, setAuthors] = useState<{ value: number; label: string }[]>([]);
-  const [selectedAuthors, setSelectedAuthors] = useState<{ value: number; label: string }[]>([]);
+  const [authors, setAuthors] = useState<{ value: string; label: string }[]>(
+    []
+  );
+  const [selectedAuthors, setSelectedAuthors] = useState<string[]>([]);
 
   const isAdmin = useAuthStore((state) => state.isAdmin());
   const [isEditing, setIsEditing] = useState(false);
@@ -65,8 +66,6 @@ const ItemPage = ({
     setAuthors(authorsToSet);
     setSelectedAuthors(selectedAuthorsToSet);
   };
-
-  const { data: filters } = useFiltersQuery(onSuccessQuery);
 
   const handleEdit = () => {
     if (isAdmin) {
@@ -162,13 +161,15 @@ const ItemPage = ({
         <span className="label-text">Authors</span>
       </label>
       <MultiSelect
-          placeholder="Pick one or more"
-          searchable
-          value={selectedAuthors}
-          onChange={(value) => setSelectedAuthors(value)}
-          nothingFound="No options"
-          data={authors}
-        />
+        {...register("authors")}
+        placeholder="Pick one or more"
+        searchable
+        nothingFound="No options"
+        data={authors}
+        onChange={(value) => {
+          setSelectedAuthors(value);
+        }}
+      />
       <ErrorMessage error={errors.num_pages?.message} />
       <label className="label">
         <span className="label-text">Image URL</span>
@@ -197,9 +198,7 @@ const ItemPage = ({
       <div className="w-full ">
         <div className="relative h-96 w-full md:h-auto">
           <Image
-            src={
-              item.image_url ? item.image_url : NO_IMAGE_LINK
-            }
+            src={item.image_url ? item.image_url : NO_IMAGE_LINK}
             alt={item.title}
             width={350}
             height={300}
@@ -220,17 +219,24 @@ const ItemPage = ({
           <tr className="bg-base-100">
             <td>{item.num_pages}</td>
             <td>{item.isbn}</td>
-            <td>{item.authors.map((author) => `${author.first_name[0]}. ${author.last_name} `)}</td>
+            <td>
+              {item.authors.map((author, index) => {
+                const authorName = `${author.first_name} ${author.last_name}`;
+                const isLastAuthor = index === item.authors.length - 1;
+                return isLastAuthor ? authorName : `${authorName}, `;
+              })}
+            </td>
           </tr>
         </table>
         <p className="my-4 flex items-center justify-end text-xl font-semibold md:text-2xl">
-          <button className="btn-info btn ml-8"
+          <button
+            className="btn-info btn ml-8"
             onClick={() => {
               handleDataSubmit(item);
             }}
-            >
+          >
             Add to Wishlist
-            </button>
+          </button>
         </p>
       </div>
     </div>
@@ -283,7 +289,7 @@ const ItemPage = ({
       </BaseModal>
       <div className="mx-auto mt-8 max-w-3xl bg-base-300 p-8">
         {isEditing ? displayEditForm : displayItem}
-        <div className="flex justify-end gap-4">
+        <div className="mt-4 flex justify-end gap-4">
           {isEditing && (
             <button className="btn-warning btn" onClick={handleEdit}>
               Cancel
