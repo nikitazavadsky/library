@@ -92,9 +92,12 @@ async def create_order(
     user_books = get_books_taken_by_user(cursor, user_id=user.id)
     validate_user_book_count(user_books, books_ids)
 
+    requested_books = sorted(books_ids + [book.id for book in user_books])
+    prepared_requested_books = ",".join([str(book) for book in requested_books])
+
     cursor.execute(
-        """INSERT INTO order_ (created_at, user_id, status) VALUES(%s, %s, %s) RETURNING id""",
-        (datetime.now(tz=timezone.utc), user.id, OrderStatus.PENDING),
+        """INSERT INTO order_ (created_at, user_id, status, requested_books) VALUES(%s, %s, %s, %s) RETURNING id""",
+        (datetime.now(tz=timezone.utc), user.id, OrderStatus.PENDING, prepared_requested_books),
     )
 
     record = cursor.fetchone()
