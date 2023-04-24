@@ -2,6 +2,7 @@ from datetime import datetime, timedelta, timezone
 from typing import Any
 
 import psycopg2.extensions
+from app.crud.book import get_books_by_order
 from fastapi import APIRouter, Depends, status
 
 from app.core.exceptions import (
@@ -27,6 +28,7 @@ from app.services import (
 )
 from app.services.order import generate_status_list, get_order_object
 from app.tasks import mark_user_as_offender
+from app.tasks.celery import celery
 
 order_router = APIRouter(tags=["order"])
 
@@ -191,3 +193,13 @@ async def reject_order(
         """UPDATE order_ SET status = %s WHERE id = %s and status = %s""",
         (OrderStatus.REJECTED, order_id, OrderStatus.PENDING),
     )
+
+    cursor.execute(
+        """UPDATE book_order SET date_finished = %s WHERE order_id = %s""",
+        (datetime.now(tz=timezone.utc), order_id),
+    )
+
+    order_books = get_books_by_order(cursor=cursor, order_id=order_id)
+
+    for order_book in order_books:
+        celery.control.revoke(task_id=f"book_{order_book.id}")

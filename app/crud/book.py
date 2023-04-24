@@ -134,6 +134,16 @@ def get_books_from_ids(cursor: psycopg2.extensions.cursor, book_ids: list[int]) 
 
     return _get_books(cursor, sql, params)
 
+def get_books_by_order(cursor: psycopg2.extensions.cursor, order_id: int) -> list[Book]:
+    sql = f"""
+        SELECT book.id, book.title, book.isbn, book.num_pages, book.authors
+        FROM ({BOOK_SQL}) AS book
+        WHERE book.id = (SELECT book_id FROM book_order WHERE order_id = %s)
+    """
+    params = (order_id,)
+
+    return _get_books(cursor, sql, params)
+
 
 def filter_books(cursor: psycopg2.extensions.cursor, search_params: dict) -> list[Book]:
 
