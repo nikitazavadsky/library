@@ -161,7 +161,7 @@ const ItemPage = ({
         <div className="relative h-96 w-full md:h-auto">
           <Image
             src={
-              NO_IMAGE_LINK
+              item.image_url ? item.image_url : NO_IMAGE_LINK
             }
             alt={item.title}
             width={350}

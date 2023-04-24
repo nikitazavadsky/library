@@ -67,10 +67,10 @@ INSERT INTO user_ (id, email, first_name, last_name, password, role) VALUES
 ;
 
 -- insert some books
-INSERT INTO book (id, title, isbn, num_pages) VALUES
-    (1, 'Go на практике', '9781633430075', 374),
-    (2, 'Благие знамения', '9785041604820', 512),
-    (3, 'В дороге', '9785171335861', 416)
+INSERT INTO book (id, title, isbn, num_pages, image_url) VALUES
+    (1, 'Go на практике', '9781633430075', 374, 'https://s3-goods.ozstatic.by/2000/944/780/10/10780944_0.jpg'),
+    (2, 'Благие знамения', '9785041604820', 512, 'https://s1-goods.ozstatic.by/2000/881/826/10/10826881_0.jpg'),
+    (3, 'В дороге', '9785171335861', 416, 'https://cv7.litres.ru/pub/c/cover_max1500/6658171.jpg')
 ;
 
 INSERT INTO author (id, first_name, last_name, origin) VALUES
