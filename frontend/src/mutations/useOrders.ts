@@ -23,7 +23,7 @@ export function useRejectOrderMutation() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (orderId: number) =>
-      axios.delete(`orders/${orderId}`).catch((err) => {
+      axios.post(`orders/${orderId}/reject`).catch((err) => {
         if (axios.isAxiosError<BasicError>(err)) {
           throw Error(err.response?.data.detail);
         } else {

@@ -119,14 +119,16 @@ const ItemPage = ({
         className="input-bordered input-primary input w-full"
         defaultValue={item?.isbn}
       />
-      <ErrorMessage error={errors.num_pages?.message} />
+      <ErrorMessage error={errors.isbn?.message} />
       <label className="label">
         <span className="label-text">Pages</span>
       </label>
       <input
-        {...register("type")}
+        {...register("num_pages", {
+          setValueAs: (value: string) => parseInt(value),
+        })}
         type="text"
-        placeholder="Enter type"
+        placeholder="Enter number of pages"
         className="input-bordered input-primary input w-full"
         defaultValue={item?.num_pages}
       />
@@ -135,12 +137,13 @@ const ItemPage = ({
         <span className="label-text">Image URL</span>
       </label>
       <input
-        {...register("imageUrl")}
+        {...register("image_url")}
         type="text"
         placeholder="Enter image url"
         className="input-bordered input-primary input w-full"
-        defaultValue={item?.imageUrl}
+        defaultValue={item?.image_url ? item?.image_url : NO_IMAGE_LINK}
       />
+      <ErrorMessage error={errors.image_url?.message} />
       <span className="text-xs">
         You can leave image URL empty if you want to use placeholder image!
       </span>

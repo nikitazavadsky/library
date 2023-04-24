@@ -8,6 +8,7 @@ from app.core.exceptions import (
     DatabaseException,
     NoRequestedBooksException,
     NotFoundException,
+    ForbiddenException
 )
 from app.core.jwt import get_current_user
 from app.crud import get_books_taken_by_user, get_cursor
@@ -181,8 +182,8 @@ async def reject_order(
     cursor: psycopg2.extensions.cursor = Depends(get_cursor),
     user: UserResponseModelExtended = Depends(get_current_user),
 ):
-    if not user.is_librarian:
-        raise NotFoundException
+    if not user.is_librarian and not user.is_admin:
+        raise ForbiddenException
 
     validate_order_status(cursor, order_id)
 

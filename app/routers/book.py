@@ -112,7 +112,7 @@ async def mark_book_as_returned(
     cursor: psycopg2.extensions.cursor = Depends(get_cursor),
     user: UserResponseModelExtended = Depends(get_current_user),
 ) -> None:
-    if not user.is_librarian:
+    if not user.is_librarian and not user.is_admin:
         raise NotFoundException
 
     book = get_book_or_404(cursor, book_id)
