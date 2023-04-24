@@ -22,7 +22,6 @@ import { NO_IMAGE_LINK } from "@/components/itemCard";
 import useCartStore from "@/stores/cart";
 import { checkTruthy } from "@/utils/objectHelpers";
 import { MultiSelect } from "@mantine/core";
-import { type Filters } from "@/queries/useFilters";
 
 export const getServerSideProps: GetServerSideProps<{
   itemId: string;
@@ -176,6 +175,7 @@ const ItemPage = ({
         onChange={(value) => {
           setSelectedAuthors(value.map(Number));
         }}
+        size="lg"
       />
       <ErrorMessage error={errors.num_pages?.message} />
       <label className="label">
