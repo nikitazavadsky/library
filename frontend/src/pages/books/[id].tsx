@@ -42,25 +42,31 @@ const ItemPage = ({
   const [authors, setAuthors] = useState<{ value: number; label: string }[]>([]);
   const [selectedAuthors, setSelectedAuthors] = useState<{ value: number; label: string }[]>([]);
 
-  const onSuccessQuery = (filterData: Filters) => {
-    const { authors } = filterData;
-
-    setAuthors(
-      authors.map((author) => ({
-        value: author.id,
-        label: `${author.first_name} ${author.last_name}`,
-      }))
-    );
-  };
-
-  const { data: filters } = useFiltersQuery(onSuccessQuery);
-
   const isAdmin = useAuthStore((state) => state.isAdmin());
   const [isEditing, setIsEditing] = useState(false);
 
   const { data: item, isLoading, isError } = useItemQuery(itemId);
   const editItemMutation = useEditItemMutation(Number(itemId));
   const deleteItemMutation = useDeleteItemMutation(Number(itemId));
+
+  const onSuccessQuery = (filterData: Filters) => {
+    const { authors } = filterData;
+
+    const authorsToSet = authors.map((author) => ({
+      value: author.id,
+      label: `${author.first_name} ${author.last_name}`,
+    }));
+
+    const selectedAuthorsToSet = item?.authors.map((author) => ({
+      value: author.id,
+      label: `${author.first_name} ${author.last_name}`,
+    }));
+
+    setAuthors(authorsToSet);
+    setSelectedAuthors(selectedAuthorsToSet);
+  };
+
+  const { data: filters } = useFiltersQuery(onSuccessQuery);
 
   const handleEdit = () => {
     if (isAdmin) {
