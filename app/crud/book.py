@@ -104,6 +104,12 @@ def _get_books(cursor: psycopg2.extensions.cursor, sql, params: tuple = tuple())
 
     return list(map(get_book_object, book_items)) if book_items else []
 
+def get_authors(cursor: psycopg2.extensions.cursor) -> list[Author]:
+    cursor.execute(BOOK_FILTERS_AUTHORS_SQL)
+    fetched_authors = cursor.fetchall()
+    print(fetched_authors)
+    return list(map(get_author_object, fetched_authors))
+
 def _get_filters(cursor: psycopg2.extensions.cursor) -> BookFilters:
     cursor.execute(BOOK_FILTERS_AUTHORS_SQL)
 

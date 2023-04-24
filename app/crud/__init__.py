@@ -10,6 +10,7 @@ from .book import (
     get_user_book_list,
     get_books_by_title,
     update_book_status,
+    get_authors
 )
 from .db import export_table_to_csv, get_cursor, get_table_names
 from .user import (
@@ -34,6 +35,7 @@ __all__ = [
     "get_user_book_list",
     "get_books_by_title",
     "update_book_status",
+    "get_authors",
     # db
     "export_table_to_csv",
     "get_cursor",

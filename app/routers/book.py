@@ -17,8 +17,9 @@ from app.crud import (
     get_user_book_list,
     get_books_by_title,
     update_book_status,
+    get_authors
 )
-from app.models import Book, BookFilters, UserResponseModelExtended
+from app.models import Book, BookFilters, UserResponseModelExtended, Author
 from app.services import (
     get_book_or_404,
     insert_books,
@@ -100,6 +101,15 @@ async def retrieve_current_user_books(
 )
 async def retrieve_single_book(book_id: int, cursor: psycopg2.extensions.cursor = Depends(get_cursor)) -> Book:
     return get_book_or_404(cursor, book_id)
+
+
+@book_router.get(
+    "/authors/",
+    summary="Retrieve all authors",
+    status_code=status.HTTP_200_OK,
+)
+async def retrieve_all_authors(cursor: psycopg2.extensions.cursor = Depends(get_cursor)) -> list[Author]:
+    return get_authors(cursor)
 
 
 @book_router.post(
