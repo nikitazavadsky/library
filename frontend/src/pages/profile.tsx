@@ -24,8 +24,8 @@ const Profile = () => {
   } = useForm<ProfileEditSchema>({
     resolver: zodResolver(profileEditSchema),
     defaultValues: {
-      firstName: user?.first_name,
-      lastName: user?.last_name,
+      first_name: user?.first_name,
+      last_name: user?.last_name,
       email: user?.email,
     },
   });
@@ -73,22 +73,22 @@ const Profile = () => {
                 <label className="input-group">
                   <span className="flex-1">First Name</span>
                   <input
-                    {...register("firstName")}
+                    {...register("first_name")}
                     type="text"
                     placeholder="John"
                     className="input-bordered input"
                   />
-                  <ErrorMessage error={errors.firstName?.message} />
+                  <ErrorMessage error={errors.first_name?.message} />
                 </label>
                 <label className="input-group">
                   <span className="flex-1">Last Name</span>
                   <input
-                    {...register("lastName")}
+                    {...register("last_name")}
                     type="text"
                     placeholder="Doe"
                     className="input-bordered input"
                   />
-                  <ErrorMessage error={errors.lastName?.message} />
+                  <ErrorMessage error={errors.last_name?.message} />
                 </label>
                 <label className="input-group">
                   <span className="flex-1">Email</span>

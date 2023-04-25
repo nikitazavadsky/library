@@ -22,7 +22,7 @@ export interface User {
   role: PossibleRoles;
 }
 
-type UserWithoutRole = Omit<User, "role">;
+export type UserWithoutRole = Omit<User, "role">;
 
 interface AuthStore {
   isAuthenticated: boolean;

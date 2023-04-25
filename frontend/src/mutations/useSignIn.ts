@@ -10,7 +10,7 @@ export default function useSignInMutation(handleSuccess: () => void) {
   const fetchUserRole = async () => {
     try {
       const response = await axios.get<
-        Omit<User, "id" | "role"> & { role?: PossibleRoles }
+        Omit<User, "role"> & { role?: PossibleRoles }
       >("/users/me");
       return response.data;
     } catch (error) {
@@ -33,7 +33,7 @@ export default function useSignInMutation(handleSuccess: () => void) {
       .catch((err) => {
         if (axios.isAxiosError<BasicError>(err)) {
           signOut();
-          throw Error(err.response?.data.message);
+          throw Error(err.response?.data.detail);
         } else {
           throw Error("Unexpected error");
         }
