@@ -26,7 +26,7 @@ BOOK_SEARCH_SQL = """
     )
     FROM book_author
     JOIN book ON book_author.book_id = book.id
-    WHERE book.title LIKE %s
+    WHERE UPPER(book.title) LIKE UPPER(%s)
 """
 
 UNAVAILABLE_BOOKS_SQL = """
@@ -126,7 +126,7 @@ def get_all_books(cursor: psycopg2.extensions.cursor) -> list[Book]:
     return _get_books(cursor, BOOK_SQL)
 
 def get_books_by_title(cursor: psycopg2.extensions.cursor, search_term: str | None) -> list[Book]:
-    return _get_books(cursor, BOOK_SEARCH_SQL, (f"%{search_term}%",))
+    return _get_books(cursor, BOOK_SEARCH_SQL, (f"%{search_term.strip().upper()}%",))
 
 def get_book_filters(cursor: psycopg2.extensions.cursor) -> BookFilters:
     return _get_filters(cursor)
@@ -183,7 +183,7 @@ def filter_books(cursor: psycopg2.extensions.cursor, search_params: dict) -> lis
                 ) AS sub ON book.id = sub.id
             """
 
-        if is_available != None or len(search_params) != 1:
+        if "min" in search_params or "max" in search_params or "author" in search_params:
             FILTER_QUERY = FILTER_QUERY + "\n WHERE "
 
             query_params = []
