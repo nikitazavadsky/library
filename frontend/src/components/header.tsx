@@ -6,7 +6,7 @@ import { useAuthStore, useFakeAuthStore } from "@/stores/auth";
 import { useEffect, useState } from "react";
 import Loader from "./loader";
 import AvatarDropdown from "./avatarDropdown";
-import { ShoppingCartIcon } from "@heroicons/react/24/solid";
+import { BookOpenIcon } from "@heroicons/react/24/solid";
 import useCartStore from "@/stores/cart";
 import { env } from "@/env.mjs";
 import SearchBar from "./searchBar";
@@ -67,7 +67,7 @@ export default function Header() {
                   {totalLength}
                 </span>
                 <Link href="/cart">
-                  <ShoppingCartIcon className="h-8 w-8 text-accent-content" />
+                  <BookOpenIcon className="h-8 w-8 text-accent-content" />
                 </Link>
               </div>
               {isAuthenticated ? (
