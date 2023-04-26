@@ -183,7 +183,7 @@ def filter_books(cursor: psycopg2.extensions.cursor, search_params: dict) -> lis
                 ) AS sub ON book.id = sub.id
             """
 
-        if is_available != None and len(search_params) != 1:
+        if is_available != None or len(search_params) != 1:
             FILTER_QUERY = FILTER_QUERY + "\n WHERE "
 
             query_params = []

@@ -10,6 +10,7 @@ import { flattenFilters } from "@/utils/objectHelpers";
 const Home: NextPage = () => {
   const [filters, setFilters] = useState<URLSearchParams>();
   const [isFiltered, setIsFiltered] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   const { data: allItems, isLoading: isLoadingAllItems } = useItemsQuery();
   const { data: allUnavailableItems, isLoading: isLoadingAllUnavailableItems } = useUnavailableItemsQuery();
@@ -49,11 +50,21 @@ const Home: NextPage = () => {
         <title>Home Page</title>
       </Head>
       <div className="mx-2 mt-4 grid grid-cols-1 md:grid-cols-3 lg:mx-16 lg:grid-cols-4">
-        <div className="col-span-1">
+      <div className="col-span-1">
+          <div className="flex justify-end">
+            <button
+              className="px-2 py-1 w-60 mr-3 mb-4 btn btn-success rounded-md"
+              onClick={() => setIsOpen(!isOpen)} // toggle isOpen when clicked
+            >
+              {isOpen ? "Hide Filters" : "Show Filters"}
+            </button>
+          </div>
+          {isOpen && ( // conditionally render ProductFilter based on isOpen
             <ProductFilter
               handleApplyFilters={handleApplyFilters}
               handleResetFilters={handleResetFilters}
             />
+          )}
         </div>
         <div className="col-span-1 md:col-span-2 lg:col-span-3">
           {isLoading ? (
@@ -67,7 +78,7 @@ const Home: NextPage = () => {
             </div>
           ) : (
             <p className="alert alert-info text-xl">
-              Looks like there are no items to buy... Yet!
+              Unfortunately, there are no books you search...
             </p>
           ))}
         </div>

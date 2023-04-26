@@ -17,8 +17,8 @@ const AvatarDropdown = () => {
     <div className="dropdown-end dropdown">
       <label tabIndex={0} className="cursor-pointer">
         <div className="initials flex h-10 w-10 items-center justify-center rounded bg-white text-xl">
-          {user?.first_name[0]}
-          {user?.last_name[0]}
+          {user?.first_name ? user?.first_name[0] : ""}
+          {user?.last_name ? user?.last_name[0] : ""}
         </div>
       </label>
       <ul
