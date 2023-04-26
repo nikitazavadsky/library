@@ -34,15 +34,17 @@ const AvatarDropdown = () => {
         >
           <Link href={"/profile"}>Profile</Link>
         </li>
-        <li
-          onClick={() => {
-            if (document.activeElement instanceof HTMLElement) {
-              document.activeElement.blur();
-            }
-          }}
-        >
-          <Link href={"/orders"}>My Book Requests</Link>
-        </li>
+        {!isAdmin && (
+          <li
+            onClick={() => {
+              if (document.activeElement instanceof HTMLElement) {
+                document.activeElement.blur();
+              }
+            }}
+          >
+            <Link href={"/orders"}>My Book Requests</Link>
+          </li>
+        )}
         {isAdmin && (
           <li
             onClick={() => {
