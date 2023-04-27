@@ -16,12 +16,13 @@ import {
   useEditItemMutation,
 } from "@/mutations/useItem";
 import { type ItemFields, itemSchema, type Item } from "@/schemas/itemSchema";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { NO_IMAGE_LINK } from "@/components/itemCard";
 import useCartStore from "@/stores/cart";
 import { checkTruthy } from "@/utils/objectHelpers";
 import { MultiSelect } from "@mantine/core";
+import { DevTool } from "@hookform/devtools";
 
 export const getServerSideProps: GetServerSideProps<{
   itemId: string;
@@ -86,17 +87,20 @@ const ItemPage = ({
     register,
     handleSubmit,
     formState: { errors },
+    control,
   } = useForm<ItemFields>({
     resolver: zodResolver(itemSchema.omit({ id: true })),
   });
   const formRef = useRef<HTMLFormElement>(null);
 
   const onSuccessEdit = (values: ItemFields) => {
+    console.warn(values);
     editItemMutation.mutate(values);
     setIsEditing(false);
   };
 
   const handleSave = () => {
+    console.error(errors);
     formRef.current?.dispatchEvent(
       new Event("submit", { cancelable: true, bubbles: true })
     );
@@ -165,17 +169,23 @@ const ItemPage = ({
       <label className="label">
         <span className="label-text">Authors</span>
       </label>
-      <MultiSelect
-        {...register("authors")}
-        placeholder="Pick one or more"
-        searchable
-        nothingFound="No options"
-        data={authors}
-        defaultValue={selectedAuthors}
-        onChange={(value) => {
-          setSelectedAuthors(value.map(Number));
-        }}
-        size="lg"
+      {/* TODO: Add PUT backend req */}
+      <Controller
+        control={control}
+        name="authors"
+        render={({ field: { onChange, value } }) => (
+          <MultiSelect
+            placeholder="Pick one or more"
+            searchable
+            nothingFound="No options"
+            data={authors}
+            value={value}
+            onChange={(selectedValues) => {
+              onChange(selectedValues.map(Number));
+            }}
+            size="lg"
+          />
+        )}
       />
       <ErrorMessage error={errors.num_pages?.message} />
       <label className="label">
@@ -193,6 +203,7 @@ const ItemPage = ({
       {editItemMutation.isError && (
         <ErrorMessage error={editItemMutation.error.message} />
       )}
+      <DevTool control={control} />
     </form>
   );
 
