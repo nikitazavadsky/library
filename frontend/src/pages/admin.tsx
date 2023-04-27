@@ -113,8 +113,8 @@ export default function AdminPage() {
       >
         <p>
           This action cannot be undone. User will be flagged as blocked. Orders
-          and user data will be preserved, but user won`&apos;`t be able to log
-          in or make any orders.
+          and user data will be preserved, but user won&apos;t be able to log in
+          or make any orders.
         </p>
       </BaseModal>
       <DevTool control={control} />
