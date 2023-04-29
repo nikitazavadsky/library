@@ -5,7 +5,7 @@ import psycopg2.extensions
 from app.models import Author, Book, OrderStatus, BookFilters, PageNumRange
 
 BOOK_SQL = """
-    SELECT DISTINCT ON (book.title) book.id, book.title, book.isbn, book.num_pages, book.image_url, (
+    SELECT DISTINCT ON (book.title) book.id, book.title, book.isbn, book.num_pages, book.description, book.image_url, (
         SELECT json_agg(json_build_array(a.id, a.first_name, a.last_name, a.origin)) AS authors
         FROM book_author ba
         JOIN author a on ba.author_id = a.id
@@ -17,7 +17,7 @@ BOOK_SQL = """
 """
 
 BOOK_SEARCH_SQL = """
-    SELECT DISTINCT ON (book.title) book.id, book.title, book.isbn, book.num_pages, book.image_url, (
+    SELECT DISTINCT ON (book.title) book.id, book.title, book.isbn, book.num_pages, book.description, book.image_url, (
         SELECT json_agg(json_build_array(a.id, a.first_name, a.last_name, a.origin)) AS authors
         FROM book_author ba
         JOIN author a on ba.author_id = a.id
@@ -59,6 +59,7 @@ def get_book_object(book_item):
         authors=[
             Author(id=author[0], first_name=author[1], last_name=author[2], origin=author[3]) for author in authors
         ],
+        description=book_item["description"]
     )
 
 def get_author_object(author):
@@ -231,7 +232,7 @@ def get_available_books(cursor: psycopg2.extensions.cursor) -> list[Book]:
 
 def get_user_book_list(cursor: psycopg2.extensions.cursor, user_id: int) -> list[Book]:
     sql = f"""
-        SELECT book.id, book.title, book.isbn, book.num_pages, book.authors
+        SELECT book.id, book.title, book.isbn, book.num_pages, book.authors, book.description
         FROM ({BOOK_SQL}) AS book
         JOIN book_order bo ON bo.book_id = book.id
         JOIN order_ o ON bo.order_id = o.id
