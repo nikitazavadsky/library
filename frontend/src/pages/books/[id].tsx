@@ -22,6 +22,7 @@ import { NO_IMAGE_LINK } from "@/components/itemCard";
 import useCartStore from "@/stores/cart";
 import { checkTruthy } from "@/utils/objectHelpers";
 import { MultiSelect } from "@mantine/core";
+import { useUnavailableItemsQuery } from "@/queries/useItems";
 import { DevTool } from "@hookform/devtools";
 
 export const getServerSideProps: GetServerSideProps<{
@@ -37,6 +38,8 @@ const ItemPage = ({
 
   const [isRehydrated, setIsRehydrated] = useState(false);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  const { data: allUnavailableItems, isLoading: isLoadingAllUnavailableItems } =
+    useUnavailableItemsQuery();
 
   const [authors, setAuthors] = useState<{ value: number; label: string }[]>(
     []
@@ -199,6 +202,17 @@ const ItemPage = ({
         defaultValue={item?.image_url ? item?.image_url : NO_IMAGE_LINK}
       />
       <ErrorMessage error={errors.image_url?.message} />
+      <label className="label">
+        <span className="label-text">Description</span>
+      </label>
+      <textarea
+        {...register("description")}
+        placeholder="Enter book description"
+        className="input-bordered input-primary input w-full"
+        defaultValue={item?.description}
+        style={{ height: "auto", minHeight: "100px" }}
+      />
+      <ErrorMessage error={errors.description?.message} />
       {editItemMutation.isPending && <Loader />}
       {editItemMutation.isError && (
         <ErrorMessage error={editItemMutation.error.message} />
@@ -252,10 +266,20 @@ const ItemPage = ({
             onClick={() => {
               handleDataSubmit(item);
             }}
+            disabled={
+              allUnavailableItems
+                ? allUnavailableItems?.some(
+                    (currentItem) => currentItem.id === item.id
+                  )
+                : false
+            }
           >
             Add to Wishlist
           </button>
         </p>
+      </div>
+      <div className="mt-4 w-full">
+        <p>{item.description}</p>
       </div>
     </div>
   );

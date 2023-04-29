@@ -21,6 +21,7 @@ class Book(BaseModel):
     num_pages: int
     image_url: str
     authors: list[Author]
+    description: str
 
 class BookShort(BaseModel):
     id: int
@@ -28,6 +29,7 @@ class BookShort(BaseModel):
     isbn: str
     image_url: str
     num_pages: int
+    description: str
 
 class PageNumRange(BaseModel):
     min: int
