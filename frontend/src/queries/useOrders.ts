@@ -8,7 +8,7 @@ export interface OrdersData {
   status: keyof typeof ORDER_STATUS_MAP;
   first_name: string;
   last_name: string;
-  createdAt: string;
+  created_at: string;
   requested_books: Omit<Item, "authors">[];
 }
 
