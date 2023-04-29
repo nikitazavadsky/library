@@ -30,9 +30,14 @@ const useCartStore = create<CartState>()(
       (set) => ({
         items: [],
         addItem: (item) =>
-          set((state) => {
+        set((state) => {
+          const itemExists = state.items.some((existingItem) => existingItem.id === item.id);
+          if (itemExists) {
+            return state;
+          } else {
             return { items: state.items.concat({ ...item }) };
-          }),
+          }
+        }),
 
         removeItem: (itemId) =>
           set((state) => ({

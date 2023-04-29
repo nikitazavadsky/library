@@ -34,7 +34,7 @@ UNAVAILABLE_BOOKS_SQL = """
     FROM book
     JOIN book_order bo ON bo.book_id = book.id
     JOIN order_ o ON bo.order_id = o.id
-    WHERE bo.date_finished IS NULL
+    WHERE bo.date_finished IS NULL AND o.status = 2
 """
 
 BOOK_FILTERS_AUTHORS_SQL = """
@@ -134,7 +134,7 @@ def get_book_filters(cursor: psycopg2.extensions.cursor) -> BookFilters:
 
 def get_books_from_ids(cursor: psycopg2.extensions.cursor, book_ids: list[int]) -> list[Book]:
     sql = f"""
-        SELECT book.id, book.title, book.isbn, book.num_pages, book.authors
+        SELECT book.id, book.title, book.isbn, book.num_pages, book.authors, book.image_url, book.description
         FROM ({BOOK_SQL}) AS book
         WHERE book.id = ANY(%s)
     """
@@ -144,7 +144,7 @@ def get_books_from_ids(cursor: psycopg2.extensions.cursor, book_ids: list[int]) 
 
 def get_books_by_order(cursor: psycopg2.extensions.cursor, order_id: int) -> list[Book]:
     sql = f"""
-        SELECT book.id, book.title, book.isbn, book.num_pages, book.authors
+        SELECT book.id, book.title, book.isbn, book.num_pages, book.authors, book.image_url, book.description
         FROM ({BOOK_SQL}) AS book
         WHERE book.id = (SELECT book_id FROM book_order WHERE order_id = %s)
     """
@@ -160,7 +160,7 @@ def filter_books(cursor: psycopg2.extensions.cursor, search_params: dict) -> lis
         FROM book
         JOIN book_order bo ON bo.book_id = book.id
         JOIN order_ o ON bo.order_id = o.id
-        WHERE bo.date_finished IS NULL
+        WHERE bo.date_finished IS NULL AND o.status = 2
     """
 
     available_sql = f"""
