@@ -1,5 +1,9 @@
 import { type BasicError } from "@/schemas/authSchema";
-import { type Item, type ItemFields } from "@/schemas/itemSchema";
+import {
+  type ItemTransformSchema,
+  type Item,
+  type ItemFields,
+} from "@/schemas/itemSchema";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { useRouter } from "next/router";
@@ -27,10 +31,10 @@ export function useCreateItemMutation() {
   });
 }
 
-export function useEditItemMutation(itemId: number) {
+export function useEditItemMutation(itemId: string) {
   const queryClient = useQueryClient();
 
-  const editItemQueryFn = (item: ItemFields) =>
+  const editItemQueryFn = (item: ItemTransformSchema) =>
     axios.put(`books/${itemId}`, item).catch((err) => {
       if (axios.isAxiosError<BasicError>(err)) {
         throw Error(err.response?.data.detail);
@@ -39,7 +43,7 @@ export function useEditItemMutation(itemId: number) {
       }
     });
 
-  return useMutation<unknown, Error, ItemFields>({
+  return useMutation<unknown, Error, ItemTransformSchema>({
     mutationFn: (item) => editItemQueryFn(item),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ["getItem"] });
@@ -47,7 +51,7 @@ export function useEditItemMutation(itemId: number) {
   });
 }
 
-export function useDeleteItemMutation(itemId: number) {
+export function useDeleteItemMutation(itemId: string) {
   const router = useRouter();
 
   const deleteItemQueryFn = () =>
@@ -63,6 +67,26 @@ export function useDeleteItemMutation(itemId: number) {
     mutationFn: () => deleteItemQueryFn(),
     onSuccess: async () => {
       await router.push("/home");
+    },
+  });
+}
+
+export function useReturnItemMutation(itemId: string) {
+  const queryClient = useQueryClient();
+
+  const returnBookQueryFn = () =>
+    axios.post(`books/${itemId}/return`).catch((err) => {
+      if (axios.isAxiosError<BasicError>(err)) {
+        throw Error(err.response?.data.detail);
+      } else {
+        throw Error("Unexpected error");
+      }
+    });
+
+  return useMutation<unknown, Error>({
+    mutationFn: () => returnBookQueryFn(),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["getUnavailableItems"] });
     },
   });
 }
