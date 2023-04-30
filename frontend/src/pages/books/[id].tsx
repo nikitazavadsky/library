@@ -14,8 +14,15 @@ import BaseModal from "@/components/baseModal";
 import {
   useDeleteItemMutation,
   useEditItemMutation,
+  useReturnItemMutation,
 } from "@/mutations/useItem";
-import { type ItemFields, itemSchema, type Item } from "@/schemas/itemSchema";
+import {
+  itemSchema,
+  type Item,
+  itemMutateSchema,
+  ItemMutateSchema,
+  transformItemSchema,
+} from "@/schemas/itemSchema";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { NO_IMAGE_LINK } from "@/components/itemCard";
@@ -41,7 +48,11 @@ const ItemPage = ({
   const { data: allUnavailableItems, isLoading: isLoadingAllUnavailableItems } =
     useUnavailableItemsQuery();
 
-  const [authors, setAuthors] = useState<{ value: number; label: string }[]>(
+  const isUnavailable = allUnavailableItems?.some(
+    (item) => item.id === parseInt(itemId)
+  );
+
+  const [authors, setAuthors] = useState<{ value: string; label: string }[]>(
     []
   );
   const [selectedAuthors, setSelectedAuthors] = useState<number[]>([]);
@@ -49,14 +60,15 @@ const ItemPage = ({
   const isAdmin = useAuthStore((state) => state.isAdmin());
   const [isEditing, setIsEditing] = useState(false);
 
-  const editItemMutation = useEditItemMutation(Number(itemId));
-  const deleteItemMutation = useDeleteItemMutation(Number(itemId));
+  const editItemMutation = useEditItemMutation(itemId);
+  const deleteItemMutation = useDeleteItemMutation(itemId);
+  const returnItemMutation = useReturnItemMutation(itemId);
 
   const onSuccessQuery = (item: Item) => {
     const { authors } = item;
 
     const authorsToSet = authors.map((author) => ({
-      value: author.id,
+      value: String(author.id),
       label: `${author.first_name} ${author.last_name}`,
     }));
 
@@ -91,19 +103,18 @@ const ItemPage = ({
     handleSubmit,
     formState: { errors },
     control,
-  } = useForm<ItemFields>({
-    resolver: zodResolver(itemSchema.omit({ id: true })),
+  } = useForm<ItemMutateSchema>({
+    resolver: zodResolver(itemMutateSchema),
   });
   const formRef = useRef<HTMLFormElement>(null);
 
-  const onSuccessEdit = (values: ItemFields) => {
-    console.warn(values);
-    editItemMutation.mutate(values);
+  const onSubmit = (data: ItemMutateSchema) => {
+    const parsedData = transformItemSchema.parse(data);
+    editItemMutation.mutate(parsedData);
     setIsEditing(false);
   };
 
   const handleSave = () => {
-    console.error(errors);
     formRef.current?.dispatchEvent(
       new Event("submit", { cancelable: true, bubbles: true })
     );
@@ -132,7 +143,8 @@ const ItemPage = ({
     <form
       ref={formRef}
       className="form-control"
-      onSubmit={handleSubmit(onSuccessEdit)}
+      // onSubmit={handleSubmit(onSuccessEdit)}
+      onSubmit={handleSubmit(onSubmit)}
     >
       <label className="label">
         <span className="label-text">Book title</span>
@@ -176,19 +188,22 @@ const ItemPage = ({
       <Controller
         control={control}
         name="authors"
-        render={({ field: { onChange, value } }) => (
-          <MultiSelect
-            placeholder="Pick one or more"
-            searchable
-            nothingFound="No options"
-            data={authors}
-            value={value}
-            onChange={(selectedValues) => {
-              onChange(selectedValues.map(Number));
-            }}
-            size="lg"
-          />
-        )}
+        defaultValue={selectedAuthors.map(String)}
+        render={({ field: { onChange, value } }) => {
+          return (
+            <MultiSelect
+              placeholder="Pick one or more"
+              searchable
+              nothingFound="No options"
+              data={authors}
+              value={value}
+              onChange={(selectedValues) => {
+                onChange(selectedValues);
+              }}
+              size="lg"
+            />
+          );
+        }}
       />
       <ErrorMessage error={errors.num_pages?.message} />
       <label className="label">
@@ -266,13 +281,7 @@ const ItemPage = ({
             onClick={() => {
               handleDataSubmit(item);
             }}
-            disabled={
-              allUnavailableItems
-                ? allUnavailableItems?.some(
-                    (currentItem) => currentItem.id === item.id
-                  )
-                : false
-            }
+            disabled={isUnavailable}
           >
             Add to Wishlist
           </button>
@@ -351,6 +360,16 @@ const ItemPage = ({
               onClick={() => setOpenDeleteModal(true)}
             >
               Delete Item
+            </button>
+          )}
+          {isAdmin && isUnavailable && (
+            <button
+              className="btn-secondary btn"
+              onClick={() => {
+                returnItemMutation.mutate();
+              }}
+            >
+              Mark as returned
             </button>
           )}
         </div>
