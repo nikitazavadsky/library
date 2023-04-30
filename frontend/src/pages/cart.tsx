@@ -73,7 +73,7 @@ const Cart: NextPage = () => {
                   </p>
                   <p>
                     <button
-                      className="ml-4 rounded bg-red-500 px-2 py-1 font-bold text-white hover:bg-red-600"
+                      className="ml-4 rounded bg-lime-600 px-2 py-1 font-bold text-white hover:bg-red-600"
                       onClick={() => removeItem(item.id)}
                     >
                       Remove
@@ -92,7 +92,7 @@ const Cart: NextPage = () => {
             <hr className="my-4" />
             <div className="ml-auto w-fit">
               <button
-                className="btn-success btn mr-2 rounded px-4 py-2 hover:bg-green-600"
+                className="bg-lime-500 btn mr-2 rounded px-4 py-2 hover:bg-lime-700"
                 onClick={() => {
                   if (!isAuthenticated) {
                     alert("Please login to checkout");
@@ -104,10 +104,12 @@ const Cart: NextPage = () => {
                 Request Books
               </button>
               <button
-                className="btn-error btn rounded px-4 py-2 hover:bg-red-600"
+                className="bg-lime-300 btn rounded px-4 py-2 hover:bg-lime-600"
                 onClick={clearCart}
               >
-                Clear Wishlist
+                <p className="font-bold text-black">
+                  Clear Wishlist
+                </p>
               </button>
             </div>
           </>

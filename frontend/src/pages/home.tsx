@@ -50,10 +50,10 @@ const Home: NextPage = () => {
         <title>Home Page</title>
       </Head>
       <div className="mx-2 mt-4 grid grid-cols-1 md:grid-cols-3 lg:mx-16 lg:grid-cols-4">
-      <div className="col-span-1">
+      <div className="col-span-1 font-sans text-lg">
           <div className="flex justify-end">
             <button
-              className="px-2 py-1 w-60 mr-3 mb-4 btn btn-success rounded-md"
+              className="px-2 py-1 w-60 mr-3 mb-4 btn bg-lime-500 rounded-md"
               onClick={() => setIsOpen(!isOpen)} // toggle isOpen when clicked
             >
               {isOpen ? "Hide Filters" : "Show Filters"}

@@ -37,7 +37,7 @@ export default function ItemCard({
 
   return (
     <>
-      <div className="card bg-base-300 shadow-xl">
+      <div className="card bg-lime-100 shadow-xl">
         <Link href={`books/${item.id}`}>
           <Image
             src={item.image_url ? item.image_url : NO_IMAGE_LINK}

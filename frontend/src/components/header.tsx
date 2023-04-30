@@ -37,17 +37,17 @@ export default function Header() {
 
   return (
     <>
-      <header className="bg-primary">
-        <nav className="mx-auto max-w-7xl px-6 lg:px-8" aria-label="Top">
-          <div className="flex w-full items-center justify-between py-6">
+      <header className="bg-lime-400 font-sans text-lg">
+        <nav className="mx-auto max-w-1xl px-6 lg:px-5" aria-label="Top">
+          <div className="flex w-full items-center justify-between py-2">
             <div className="flex items-center">
               <Link href="/home">
                 <span className="sr-only">Your Company</span>
                 <Image
-                  className="h-10 w-auto"
-                  width={40}
-                  height={40}
-                  src="/book.png"
+                  className="h-12 w-auto"
+                  width={120}
+                  height={78}
+                  src="/logo2.png"
                   alt="Logo icon"
                 />
               </Link>
@@ -60,11 +60,14 @@ export default function Header() {
                 Fake Auth
               </button>
             )}
-            <SearchBar />
-            <div className="flex items-center">
+            
+            <div className="flex items-center justify-end">
+              <div className="mr-8">
+                <SearchBar />
+              </div>
               <div className="indicator mr-10">
-                <span className="badge-info badge indicator-item pointer-events-none">
-                  {totalLength}
+                <span className="bg-lime-600 badge-info badge indicator-item pointer-events-none">
+                  <p className="text-white">{totalLength}</p>
                 </span>
                 <Link href="/cart">
                   <BookOpenIcon className="h-8 w-8 text-accent-content" />

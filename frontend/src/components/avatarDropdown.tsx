@@ -1,6 +1,7 @@
 import { useAuthStore } from "@/stores/auth";
 import useCartStore from "@/stores/cart";
 import Link from "next/link";
+import Image from "next/image";
 
 const AvatarDropdown = () => {
   const { signOut, user } = useAuthStore();
@@ -16,11 +17,15 @@ const AvatarDropdown = () => {
   return (
     <div className="dropdown-end dropdown">
       <label tabIndex={0} className="cursor-pointer">
-        <div className="initials flex h-10 w-10 items-center justify-center rounded bg-white text-xl">
-          {user?.first_name ? user?.first_name[0] : ""}
-          {user?.last_name ? user?.last_name[0] : ""}
-        </div>
+      <Image
+                  className="h-10 w-auto"
+                  width={40}
+                  height={40}
+                  src="/profile.png"
+                  alt="Profile icon"
+                />
       </label>
+      
       <ul
         tabIndex={0}
         className="dropdown-content menu rounded-box mt-4 w-52 bg-base-100 p-2 shadow-2xl"
