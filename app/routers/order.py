@@ -131,10 +131,11 @@ async def get_order(
         order_id,
     ]
 
-    if not user.is_librarian:
+    if not user.is_librarian and not user.is_admin:
         sql += " AND user_id = %s"
         params.append(user.id)
 
+    cursor.execute(sql, params)
     order_item = cursor.fetchone()
     if not order_item:
         raise NotFoundException
@@ -143,16 +144,16 @@ async def get_order(
 
 
 @order_router.post(
-    path="/{order_id}/approve",
+    path="/{order_id}/approve/",
     status_code=status.HTTP_200_OK,
-    summary="Approve order by id. (librarian)",
+    summary="Approve order by id. (librarian or admin)",
 )
 async def approve_order(
     order_id: int,
     cursor: psycopg2.extensions.cursor = Depends(get_cursor),
     user: UserResponseModelExtended = Depends(get_current_user),
 ):
-    if not user.is_librarian:
+    if not user.is_librarian and not user.is_admin:
         raise NotFoundException
 
     order_item = validate_order_status(cursor, order_id)
@@ -165,10 +166,6 @@ async def approve_order(
     current_datetime = datetime.now(tz=timezone.utc)
 
     book_order_values = (str((order_id, book_id, current_datetime.isoformat())) for book_id in books_ids)
-    cursor.execute(
-        f"""INSERT INTO book_order (order_id, book_id, date_start)
-        VALUES {','.join(book_order_values)}"""
-    )
     for book_id in books_ids:
         mark_user_as_offender.apply_async(
             (user_id, book_id), eta=current_datetime + timedelta(days=14), task_id=f"book_{book_id}"

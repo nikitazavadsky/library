@@ -16,16 +16,24 @@ const ProductFilter: React.FC<Props> = ({
 
   // RangeSlider
   const [pageNumRange, setPageNumRange] = useState<[number, number]>([0, 0]);
-  const [authors, setAuthors] = useState<{ value: number; label: string }[]>([]);
-  const [availability, setAvailability] = useState<{ value: boolean | 'any'; label: string }[]>([
-    {value: true, label: 'Available'},
-    {value: false, label: 'Not available'},
-    {value: 'any', label: 'Any'},
+  const [authors, setAuthors] = useState<{ value: number; label: string }[]>(
+    []
+  );
+  const [availability, setAvailability] = useState<
+    { value: boolean | "any"; label: string }[]
+  >([
+    { value: true, label: "Available" },
+    { value: false, label: "Not available" },
+    { value: "any", label: "Any" },
   ]);
 
-  // // Selects
-  const [selectedAvailability, setSelectedAvailability] = useState<boolean | null>(null);
-  const [selectedAuthors, setSelectedAuthors] = useState<{ value: number; label: string }[]>([]);
+  // Selects
+  const [selectedAvailability, setSelectedAvailability] = useState<
+    boolean | null
+  >(null);
+  const [selectedAuthors, setSelectedAuthors] = useState<
+    { value: number; label: string }[]
+  >([]);
 
   const onSuccessQuery = (filterData: Filters) => {
     const { num_pages, authors } = filterData;
@@ -37,13 +45,11 @@ const ProductFilter: React.FC<Props> = ({
         label: `${author.first_name} ${author.last_name}`,
       }))
     );
-    setAvailability(
-      [
-        {value: true, label: 'Available'},
-        {value: false, label: 'Not available'},
-        {value: 'any', label: 'Any'},
-      ]
-    )
+    setAvailability([
+      { value: true, label: "Available" },
+      { value: false, label: "Not available" },
+      { value: "any", label: "Any" },
+    ]);
   };
 
   const { data: filters } = useFiltersQuery(onSuccessQuery);

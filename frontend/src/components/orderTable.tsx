@@ -1,7 +1,7 @@
-import { ORDER_STATUS_MAP } from "@/constants/orderStatusMap";
+import { ORDER_STATUS_MAP, PENDING } from "@/constants/orderStatusMap";
 import {
   useRejectOrderMutation,
-  useMoveOrderMutation,
+  useApproveOrderMutation,
 } from "@/mutations/useOrders";
 import { type OrdersData } from "@/queries/useOrders";
 import Link from "next/link";
@@ -13,6 +13,7 @@ export default function OrderTable({
   ordersData: OrdersData[];
   isAdmin?: boolean;
 }) {
+  const approveOrderMutation = useApproveOrderMutation();
   const rejectOrderMutation = useRejectOrderMutation();
 
   if (!ordersData) return null;
@@ -52,37 +53,23 @@ export default function OrderTable({
             <td>{ORDER_STATUS_MAP[order.status]}</td>
             <td>{order.created_at}</td>
             {isAdmin && (
-              <td className="flex justify-between">
-                {/* {order.status === "IN_PROCESSING" && (
-                  <>
-                    <button
-                      className="btn-success btn"
-                      onClick={() => moveOrderMutation.mutate(order.id)}
-                    >
-                      Move to &quot;In Delivery&quot;
-                    </button>
-                    <button
-                      className="btn-error btn ml-auto"
-                      onClick={() => rejectOrderMutation.mutate(order.id)}
-                    >
-                      Reject
-                    </button>
-                  </>
-                )}
-                {order.status === "IN_DELIVERY" && (
+              <td>
+                {order.status === PENDING && (
                   <button
-                    className="btn-success btn"
-                    onClick={() => moveOrderMutation.mutate(order.id)}
+                    className="btn-error btn ml-auto"
+                    onClick={() => rejectOrderMutation.mutate(order.id)}
                   >
-                    Move to &quot;Delivered&quot;
+                    Reject
                   </button>
-                )} */}
-                <button
-                  className="btn-error btn ml-auto"
-                  onClick={() => rejectOrderMutation.mutate(order.id)}
-                >
-                  Reject
-                </button>
+                )}
+                {order.status === PENDING && (
+                  <button
+                    className="btn-success btn ml-auto"
+                    onClick={() => approveOrderMutation.mutate(order.id)}
+                  >
+                    Approve
+                  </button>
+                )}
               </td>
             )}
           </tr>

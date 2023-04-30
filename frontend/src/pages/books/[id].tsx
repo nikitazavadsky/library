@@ -14,14 +14,23 @@ import BaseModal from "@/components/baseModal";
 import {
   useDeleteItemMutation,
   useEditItemMutation,
+  useReturnItemMutation,
 } from "@/mutations/useItem";
-import { type ItemFields, itemSchema, type Item } from "@/schemas/itemSchema";
-import { useForm } from "react-hook-form";
+import {
+  itemSchema,
+  type Item,
+  itemMutateSchema,
+  ItemMutateSchema,
+  transformItemSchema,
+} from "@/schemas/itemSchema";
+import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { NO_IMAGE_LINK } from "@/components/itemCard";
 import useCartStore from "@/stores/cart";
 import { checkTruthy } from "@/utils/objectHelpers";
 import { MultiSelect } from "@mantine/core";
+import { useUnavailableItemsQuery } from "@/queries/useItems";
+import { DevTool } from "@hookform/devtools";
 
 export const getServerSideProps: GetServerSideProps<{
   itemId: string;
@@ -36,8 +45,14 @@ const ItemPage = ({
 
   const [isRehydrated, setIsRehydrated] = useState(false);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  const { data: allUnavailableItems, isLoading: isLoadingAllUnavailableItems } =
+    useUnavailableItemsQuery();
 
-  const [authors, setAuthors] = useState<{ value: number; label: string }[]>(
+  const isUnavailable = allUnavailableItems?.some(
+    (item) => item.id === parseInt(itemId)
+  );
+
+  const [authors, setAuthors] = useState<{ value: string; label: string }[]>(
     []
   );
   const [selectedAuthors, setSelectedAuthors] = useState<number[]>([]);
@@ -45,14 +60,15 @@ const ItemPage = ({
   const isAdmin = useAuthStore((state) => state.isAdmin());
   const [isEditing, setIsEditing] = useState(false);
 
-  const editItemMutation = useEditItemMutation(Number(itemId));
-  const deleteItemMutation = useDeleteItemMutation(Number(itemId));
+  const editItemMutation = useEditItemMutation(itemId);
+  const deleteItemMutation = useDeleteItemMutation(itemId);
+  const returnItemMutation = useReturnItemMutation(itemId);
 
   const onSuccessQuery = (item: Item) => {
     const { authors } = item;
 
     const authorsToSet = authors.map((author) => ({
-      value: author.id,
+      value: String(author.id),
       label: `${author.first_name} ${author.last_name}`,
     }));
 
@@ -86,13 +102,15 @@ const ItemPage = ({
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<ItemFields>({
-    resolver: zodResolver(itemSchema.omit({ id: true })),
+    control,
+  } = useForm<ItemMutateSchema>({
+    resolver: zodResolver(itemMutateSchema),
   });
   const formRef = useRef<HTMLFormElement>(null);
 
-  const onSuccessEdit = (values: ItemFields) => {
-    editItemMutation.mutate(values);
+  const onSubmit = (data: ItemMutateSchema) => {
+    const parsedData = transformItemSchema.parse(data);
+    editItemMutation.mutate(parsedData);
     setIsEditing(false);
   };
 
@@ -125,7 +143,8 @@ const ItemPage = ({
     <form
       ref={formRef}
       className="form-control"
-      onSubmit={handleSubmit(onSuccessEdit)}
+      // onSubmit={handleSubmit(onSuccessEdit)}
+      onSubmit={handleSubmit(onSubmit)}
     >
       <label className="label">
         <span className="label-text">Book title</span>
@@ -165,17 +184,26 @@ const ItemPage = ({
       <label className="label">
         <span className="label-text">Authors</span>
       </label>
-      <MultiSelect
-        {...register("authors")}
-        placeholder="Pick one or more"
-        searchable
-        nothingFound="No options"
-        data={authors}
-        defaultValue={selectedAuthors}
-        onChange={(value) => {
-          setSelectedAuthors(value.map(Number));
+      {/* TODO: Add PUT backend req */}
+      <Controller
+        control={control}
+        name="authors"
+        defaultValue={selectedAuthors.map(String)}
+        render={({ field: { onChange, value } }) => {
+          return (
+            <MultiSelect
+              placeholder="Pick one or more"
+              searchable
+              nothingFound="No options"
+              data={authors}
+              value={value}
+              onChange={(selectedValues) => {
+                onChange(selectedValues);
+              }}
+              size="lg"
+            />
+          );
         }}
-        size="lg"
       />
       <ErrorMessage error={errors.num_pages?.message} />
       <label className="label">
@@ -189,10 +217,22 @@ const ItemPage = ({
         defaultValue={item?.image_url ? item?.image_url : NO_IMAGE_LINK}
       />
       <ErrorMessage error={errors.image_url?.message} />
+      <label className="label">
+        <span className="label-text">Description</span>
+      </label>
+      <textarea
+        {...register("description")}
+        placeholder="Enter book description"
+        className="input-bordered input-primary input w-full"
+        defaultValue={item?.description}
+        style={{ height: "auto", minHeight: "100px" }}
+      />
+      <ErrorMessage error={errors.description?.message} />
       {editItemMutation.isPending && <Loader />}
       {editItemMutation.isError && (
         <ErrorMessage error={editItemMutation.error.message} />
       )}
+      <DevTool control={control} />
     </form>
   );
 
@@ -241,10 +281,14 @@ const ItemPage = ({
             onClick={() => {
               handleDataSubmit(item);
             }}
+            disabled={isUnavailable}
           >
             Add to Wishlist
           </button>
         </p>
+      </div>
+      <div className="mt-4 w-full">
+        <p>{item.description}</p>
       </div>
     </div>
   );
@@ -316,6 +360,16 @@ const ItemPage = ({
               onClick={() => setOpenDeleteModal(true)}
             >
               Delete Item
+            </button>
+          )}
+          {isAdmin && isUnavailable && (
+            <button
+              className="btn-secondary btn"
+              onClick={() => {
+                returnItemMutation.mutate();
+              }}
+            >
+              Mark as returned
             </button>
           )}
         </div>

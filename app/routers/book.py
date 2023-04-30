@@ -19,12 +19,13 @@ from app.crud import (
     update_book_status,
     get_authors
 )
-from app.models import Book, BookFilters, UserResponseModelExtended, Author
+from app.models import Book, BookFilters, UserResponseModelExtended, Author, BookUpdate
 from app.services import (
     get_book_or_404,
     insert_books,
     validate_data_folder_existence,
     validate_table_existence,
+    update_single_book
 )
 from app.tasks.celery import celery
 
@@ -100,6 +101,18 @@ async def retrieve_current_user_books(
     status_code=status.HTTP_200_OK,
 )
 async def retrieve_single_book(book_id: int, cursor: psycopg2.extensions.cursor = Depends(get_cursor)) -> Book:
+    return get_book_or_404(cursor, book_id)
+
+@book_router.put(
+    "/{book_id}/",
+    summary="Update book by id.",
+    status_code=status.HTTP_200_OK,
+)
+async def update_book(
+    book_id: int,
+    book: BookUpdate, 
+    cursor: psycopg2.extensions.cursor = Depends(get_cursor)) -> Book:
+    update_single_book(cursor, book_id, book)
     return get_book_or_404(cursor, book_id)
 
 

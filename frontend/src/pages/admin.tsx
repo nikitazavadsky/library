@@ -5,12 +5,8 @@ import { useAllUsersQuery } from "../queries/useUser";
 import axios from "axios";
 import BaseModal from "@/components/baseModal";
 import useBlockUserMutation from "@/mutations/useUser";
-import { type ItemMutateSchema, itemMutateSchema } from "@/schemas/itemSchema";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import Head from "next/head";
 import { useAuthStore } from "@/stores/auth";
-import { DevTool } from "@hookform/devtools";
 
 async function handleDownloadAnalytics() {
   try {
@@ -63,10 +59,6 @@ export default function AdminPage() {
   const [userIdToDelete, setUserIdToDelete] = useState<number | null>(null);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
 
-  const { control } = useForm<ItemMutateSchema>({
-    resolver: zodResolver(itemMutateSchema),
-  });
-
   const { user } = useAuthStore();
   const currentUserEmail = user?.email;
 
@@ -113,11 +105,10 @@ export default function AdminPage() {
       >
         <p>
           This action cannot be undone. User will be flagged as blocked. Orders
-          and user data will be preserved, but user won`&apos;`t be able to log
-          in or make any orders.
+          and user data will be preserved, but user won&apos;t be able to log in
+          or make any orders.
         </p>
       </BaseModal>
-      <DevTool control={control} />
       <div className="m-12 bg-base-300 p-8">
         <div className="mb-5 flex flex-col gap-4">
           <button className="btn-info btn" onClick={handleDownloadAnalytics}>
