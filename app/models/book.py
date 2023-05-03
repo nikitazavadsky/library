@@ -23,6 +23,15 @@ class Book(BaseModel):
     authors: list[Author]
     description: str
 
+class BookUpdate(BaseModel):
+    id: int
+    title: str
+    isbn: str
+    num_pages: int
+    image_url: str
+    authors: list[int]
+    description: str
+
 class BookShort(BaseModel):
     id: int
     title: str

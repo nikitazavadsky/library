@@ -1,5 +1,5 @@
 from .analytics import generate_report
-from .book import get_book_or_404, insert_books
+from .book import get_book_or_404, insert_books, update_single_book
 from .user import get_user_or_404
 from .validators import (
     validate_data_folder_existence,
@@ -23,4 +23,5 @@ __all__ = [
     "validate_user_book_count",
     "validate_user_is_not_exist",
     "validate_user_is_not_offender",
+    "update_single_book"
 ]

@@ -2,7 +2,7 @@ import psycopg2.extensions
 
 from app.core.exceptions import DatabaseException, NotFoundException
 from app.crud import get_one_book
-from app.models import Book
+from app.models import Book, BookUpdate
 
 
 def get_book_or_404(cursor: psycopg2.extensions.cursor, book_id: int) -> Book:
@@ -57,3 +57,18 @@ def insert_books(cursor: psycopg2.extensions.cursor, books: list[dict]) -> int:
         book_count += 1
 
     return book_count
+
+def update_single_book(cursor: psycopg2.extensions.cursor, book_id: int, book: BookUpdate):
+
+    sql = "UPDATE book SET title=%s,isbn=%s,num_pages=%s,image_url=%s,description=%s WHERE id=%s"
+    sql_params = (book.title, book.isbn, book.num_pages, book.image_url, book.description, book_id)
+
+    cursor.execute(sql, sql_params)
+
+    delete_authors_sql = "DELETE FROM book_author WHERE book_id in %s"
+    delete_authors_sql_params = tuple(book.authors)
+
+    cursor.execute(delete_authors_sql, (delete_authors_sql_params,))
+
+    for author in book.authors:
+        cursor.execute("INSERT INTO book_author(book_id,author_id) VALUES (%s, %s)", (book_id, author))
