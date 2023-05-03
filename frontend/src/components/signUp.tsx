@@ -23,7 +23,7 @@ export default function SignUp({ children }: { children?: React.ReactNode }) {
     <>
       <label
         htmlFor="sign-up-modal"
-        className="btn-secondary btn ml-5 rounded-md border border-transparent normal-case"
+        className="bg-lime-500 btn ml-5 rounded-md border border-transparent normal-case"
       >
         Sign up
       </label>

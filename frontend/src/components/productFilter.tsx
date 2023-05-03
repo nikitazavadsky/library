@@ -54,7 +54,7 @@ const ProductFilter: React.FC<Props> = ({
 
   const { data: filters } = useFiltersQuery(onSuccessQuery);
   return (
-    <div className="border border-accent p-4 shadow-2xl md:mr-4">
+    <div className="rounded-lg border border-bg-lime-700 p-4 shadow-2xl md:mr-4">
       <div className="mb-4">
         <h2 className="mb-8 text-center font-semibold">Pages</h2>
         <RangeSlider
@@ -99,7 +99,7 @@ const ProductFilter: React.FC<Props> = ({
 
       <div className="flex flex-wrap justify-end gap-4">
         <button
-          className="btn-success btn"
+          className="bg-lime-600 btn"
           onClick={() => {
             handleApplyFilters({
               availability: selectedAvailability,
@@ -114,7 +114,7 @@ const ProductFilter: React.FC<Props> = ({
           Apply Filters
         </button>
         <button
-          className="btn-error btn"
+          className="bg-lime-400 btn"
           onClick={() => {
             handleResetFilters();
             setSelectedAuthors([]);

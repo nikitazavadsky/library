@@ -33,7 +33,7 @@ export default function SignIn({ children, showSuccessMessage }: Props) {
     <>
       <label
         htmlFor="sign-in-modal"
-        className="btn-accent btn rounded-md border border-transparent normal-case  hover:bg-opacity-75"
+        className="bg-lime-600 btn rounded-md border border-transparent normal-case  hover:bg-opacity-75"
       >
         Sign in
       </label>
