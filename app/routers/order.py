@@ -57,7 +57,7 @@ async def get_orders(
         status_list,
     ]
 
-    if not user.is_librarian:
+    if not user.is_librarian and not user.is_admin:
         sql += " AND user_id = %s"
         params.append(user.id)
 
