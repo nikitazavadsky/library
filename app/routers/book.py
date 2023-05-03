@@ -163,7 +163,7 @@ async def import_books(
     Example: Программирование на языке Rust;9785041950392;550;Джейсон Орендорф США, Джим Блэнди США
     """
 
-    if not user.is_librarian:
+    if not user.is_librarian and not user.is_admin:
         raise NotFoundException
 
     try:
@@ -172,6 +172,8 @@ async def import_books(
 
         reader = csv.DictReader(decoded_file_content, fieldnames=fieldnames, delimiter=";")
         books = list(reader)
+
+        print(books)
 
         book_count = insert_books(cursor, books)
     except Exception as e:

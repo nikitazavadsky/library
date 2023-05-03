@@ -40,9 +40,9 @@ function handleFileChange(event: ChangeEvent<HTMLInputElement>) {
 async function uploadFile(file: File) {
   try {
     const formData = new FormData();
-    formData.append("file", file);
+    formData.append("csv_file", file);
 
-    const response = await axios.post("items/upload", formData, {
+    const response = await axios.post("books/import", formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
