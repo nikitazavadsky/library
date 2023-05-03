@@ -24,7 +24,6 @@ class Book(BaseModel):
     description: str
 
 class BookUpdate(BaseModel):
-    id: int
     title: str
     isbn: str
     num_pages: int

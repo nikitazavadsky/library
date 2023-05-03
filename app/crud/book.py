@@ -257,6 +257,12 @@ def get_books_taken_by_user(cursor: psycopg2.extensions.cursor, user_id: int) ->
         JOIN order_ o ON bo.order_id = o.id
         WHERE bo.date_finished IS NULL AND o.user_id = %s
     """
+
+    sql = f"""{BOOK_SQL}
+        JOIN book_order bo ON bo.book_id = book.id
+        JOIN order_ o ON bo.order_id = o.id
+        WHERE bo.date_finished IS NULL AND o.user_id = %s
+    """
     params = (user_id,)
 
     return _get_books(cursor, sql, params)

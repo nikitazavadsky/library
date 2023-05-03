@@ -31,6 +31,8 @@ import { checkTruthy } from "@/utils/objectHelpers";
 import { MultiSelect } from "@mantine/core";
 import { useUnavailableItemsQuery } from "@/queries/useItems";
 import { DevTool } from "@hookform/devtools";
+import useFiltersQuery, { Filters } from "@/queries/useFilters";
+import useFilters from "@/queries/useFilters";
 
 export const getServerSideProps: GetServerSideProps<{
   itemId: string;
@@ -65,12 +67,6 @@ const ItemPage = ({
   const returnItemMutation = useReturnItemMutation(itemId);
 
   const onSuccessQuery = (item: Item) => {
-    const { authors } = item;
-
-    const authorsToSet = authors.map((author) => ({
-      value: String(author.id),
-      label: `${author.first_name} ${author.last_name}`,
-    }));
 
     const existingItem = itemSchema.parse(item);
 
@@ -78,9 +74,21 @@ const ItemPage = ({
       (author) => author.id
     );
 
-    setAuthors(authorsToSet);
     setSelectedAuthors(selectedAuthorsToSet);
   };
+
+  const onSuccessAuthorsQuery = (filters: Filters) => {
+    const { authors } = filters;
+
+    const authorsToSet = authors.map((author) => ({
+      value: String(author.id),
+      label: `${author.first_name} ${author.last_name}`,
+    }));
+
+    setAuthors(authorsToSet);
+  };
+
+  const filters = useFilters(onSuccessAuthorsQuery);
 
   const {
     data: item,

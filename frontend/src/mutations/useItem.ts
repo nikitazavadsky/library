@@ -35,7 +35,7 @@ export function useEditItemMutation(itemId: string) {
   const queryClient = useQueryClient();
 
   const editItemQueryFn = (item: ItemTransformSchema) =>
-    axios.put(`books/${itemId}`, item).catch((err) => {
+    axios.put(`books/${itemId}/`, item).catch((err) => {
       if (axios.isAxiosError<BasicError>(err)) {
         throw Error(err.response?.data.detail);
       } else {
