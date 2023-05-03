@@ -65,10 +65,11 @@ def update_single_book(cursor: psycopg2.extensions.cursor, book_id: int, book: B
 
     cursor.execute(sql, sql_params)
 
-    delete_authors_sql = "DELETE FROM book_author WHERE book_id in %s"
-    delete_authors_sql_params = tuple(book.authors)
+    delete_authors_sql = f"DELETE FROM book_author WHERE book_id = {book_id}"
 
-    cursor.execute(delete_authors_sql, (delete_authors_sql_params,))
+    cursor.execute(delete_authors_sql)
+
+    print(f"Execute sql: {delete_authors_sql}")
 
     for author in book.authors:
         cursor.execute("INSERT INTO book_author(book_id,author_id) VALUES (%s, %s)", (book_id, author))
