@@ -68,24 +68,24 @@ async def create_librarian(
     return {"user_id": user_id}
 
 
-@user_router.delete(
-    path="/{user_id}",
-    status_code=status.HTTP_204_NO_CONTENT,
-    summary="Delete a librarian. (admin)",
-)
-async def delete_librarian(
-    user_id: int,
-    cursor: psycopg2.extensions.cursor = Depends(get_cursor),
-    user: UserResponseModelExtended = Depends(get_current_user),
-):
-    if not user.is_admin:
-        raise NotFoundException
+# @user_router.delete(
+#     path="/{user_id}",
+#     status_code=status.HTTP_204_NO_CONTENT,
+#     summary="Delete a librarian. (admin)",
+# )
+# async def delete_librarian(
+#     user_id: int,
+#     cursor: psycopg2.extensions.cursor = Depends(get_cursor),
+#     user: UserResponseModelExtended = Depends(get_current_user),
+# ):
+#     if not user.is_admin:
+#         raise NotFoundException
 
-    user_to_delete = get_user_or_404(cursor, user_id)
-    if user_to_delete.is_librarian:
-        raise ForbiddenException
+#     user_to_delete = get_user_or_404(cursor, user_id)
+#     if user_to_delete.is_librarian:
+#         raise ForbiddenException
 
-    delete_user(cursor, user_to_delete.id)
+#     delete_user(cursor, user_to_delete.id)
 
 
 @user_router.get(
@@ -206,3 +206,18 @@ async def reject_user_order(
     user: UserResponseModelExtended = Depends(get_current_user),
 ):
     return await reject_order(order_id=order_id, cursor=cursor, user=user)
+
+@user_router.delete(
+    path="/{user_id}/",
+    status_code=status.HTTP_200_OK,
+    summary="Delete user by id",
+)
+async def block_user(
+    user_id: int,
+    cursor: psycopg2.extensions.cursor = Depends(get_cursor),
+    user: UserResponseModelExtended = Depends(get_current_user),
+) -> int:
+    if not user.is_admin:
+        raise NotFoundException
+
+    return await delete_user(cursor=cursor, user_id=user_id)

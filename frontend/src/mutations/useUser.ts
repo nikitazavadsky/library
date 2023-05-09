@@ -5,7 +5,7 @@ import axios from "axios";
 export default function useBlockUserMutation(handleSuccess: () => void) {
   const queryClient = useQueryClient();
   const blockUserQueryFn = (userId: number) =>
-    axios.delete(`users/${userId}`).catch((err) => {
+    axios.delete(`users/${userId}/`).catch((err) => {
       if (axios.isAxiosError<BasicError>(err)) {
         throw Error(err.response?.data.detail);
       } else {
