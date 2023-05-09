@@ -55,7 +55,7 @@ export function useDeleteItemMutation(itemId: string) {
   const router = useRouter();
 
   const deleteItemQueryFn = () =>
-    axios.delete(`items/${itemId}`).catch((err) => {
+    axios.delete(`books/${itemId}/`).catch((err) => {
       if (axios.isAxiosError<BasicError>(err)) {
         throw Error(err.response?.data.detail);
       } else {

@@ -31,7 +31,7 @@ def create_user(user: UserCreateModel, cursor: psycopg2.extensions.cursor = Depe
     response_model=TokenObtainPair,
 )
 def login(user: UserLoginModel, cursor: psycopg2.extensions.cursor = Depends(get_cursor)):
-    cursor.execute("""SELECT password FROM user_ WHERE email = %s""", (user.email,))
+    cursor.execute("""SELECT password FROM user_ WHERE email = %s AND deleted_at is NULL""", (user.email,))
     user_password = result[0] if (result := cursor.fetchone()) else ""
     if not user_password:
         raise UserNotFoundException(user_email=user.email)

@@ -17,7 +17,8 @@ from app.crud import (
     get_user_book_list,
     get_books_by_title,
     update_book_status,
-    get_authors
+    get_authors,
+    delete_book
 )
 from app.models import Book, BookFilters, UserResponseModelExtended, Author, BookUpdate
 from app.services import (
@@ -208,3 +209,11 @@ async def export_books(
     filename = export_table_to_csv(cursor, table_name)
 
     return FileResponse(filename)
+
+@book_router.delete(
+    "/{book_id}/",
+    summary="Delete book by id",
+    status_code=status.HTTP_200_OK,
+)
+async def delete_book_item(book_id:int, cursor: psycopg2.extensions.cursor = Depends(get_cursor)):
+    return delete_book(cursor=cursor, book_id=book_id)

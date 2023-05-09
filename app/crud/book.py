@@ -26,7 +26,7 @@ BOOK_SEARCH_SQL = """
     )
     FROM book_author
     JOIN book ON book_author.book_id = book.id
-    WHERE UPPER(book.title) LIKE UPPER(%s)
+    WHERE UPPER(book.title) LIKE UPPER(%s) AND book.deleted_at IS NULL
 """
 
 UNAVAILABLE_BOOKS_SQL = """
@@ -86,7 +86,7 @@ def get_filters_object(authors: list[Author], page_num_range: PageNumRange):
     )
 
 def get_one_book(cursor: psycopg2.extensions.cursor, book_id: int) -> Book | None:
-    cursor.execute(f"""{BOOK_SQL} WHERE book.id = %s""", (book_id,))
+    cursor.execute(f"""{BOOK_SQL} WHERE book.id = %s AND book.deleted_at is NULL""", (book_id,))
 
     if book_item := cursor.fetchone():
         return get_book_object(book_item)
@@ -124,7 +124,7 @@ def _get_filters(cursor: psycopg2.extensions.cursor) -> BookFilters:
 
 
 def get_all_books(cursor: psycopg2.extensions.cursor) -> list[Book]:
-    return _get_books(cursor, BOOK_SQL)
+    return _get_books(cursor, BOOK_SQL + "WHERE book.deleted_at is NULL")
 
 def get_books_by_title(cursor: psycopg2.extensions.cursor, search_term: str | None) -> list[Book]:
     return _get_books(cursor, BOOK_SEARCH_SQL, (f"%{search_term.strip().upper()}%",))
@@ -160,7 +160,7 @@ def filter_books(cursor: psycopg2.extensions.cursor, search_params: dict) -> lis
         FROM book
         JOIN book_order bo ON bo.book_id = book.id
         JOIN order_ o ON bo.order_id = o.id
-        WHERE bo.date_finished IS NULL AND o.status = 2
+        WHERE bo.date_finished IS NULL AND o.status = 2 AND book.deleted_at IS NULL
     """
 
     available_sql = f"""
@@ -168,6 +168,7 @@ def filter_books(cursor: psycopg2.extensions.cursor, search_params: dict) -> lis
         FROM book
         EXCEPT
         {unavailable_sql}
+        WHERE book.deleted_at IS NULL
     """
 
     FILTER_QUERY = BOOK_SQL
@@ -226,6 +227,7 @@ def get_available_books(cursor: psycopg2.extensions.cursor) -> list[Book]:
             EXCEPT
             {UNAVAILABLE_BOOKS_SQL}
         ) AS sub ON book.id = sub.id
+        WHERE book.deleted_at is NULL
     """
     return _get_books(cursor, sql)
 
@@ -266,3 +268,6 @@ def get_books_taken_by_user(cursor: psycopg2.extensions.cursor, user_id: int) ->
     params = (user_id,)
 
     return _get_books(cursor, sql, params)
+
+def delete_book(cursor: psycopg2.extensions.cursor, book_id: int):
+    cursor.execute("""UPDATE book SET deleted_at=NOW() WHERE id = %s""", (book_id,))

@@ -60,9 +60,4 @@ def insert_user(cursor: psycopg2.extensions.cursor, user: UserCreateModel, role:
 
 
 def delete_user(cursor: psycopg2.extensions.cursor, user_id: int):
-    cursor.execute("""DELETE FROM user_ WHERE id = %s RETURNING id""", (user_id,))
-
-    if not (user_item := cursor.fetchone()):
-        raise DatabaseException
-
-    return user_item["id"]  # type: ignore
+    cursor.execute("""UPDATE user_ SET deleted_at=NOW() WHERE id = %s""", (user_id,))
