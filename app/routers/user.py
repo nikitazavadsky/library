@@ -221,3 +221,18 @@ async def block_user(
         raise NotFoundException
 
     return await delete_user(cursor=cursor, user_id=user_id)
+
+@user_router.post(
+    path="/{user_id}/",
+    status_code=status.HTTP_200_OK,
+    summary="Update user by id",
+)
+async def block_user(
+    user_id: int,
+    cursor: psycopg2.extensions.cursor = Depends(get_cursor),
+    user: UserResponseModelExtended = Depends(get_current_user),
+) -> int:
+    if not user.is_admin:
+        raise NotFoundException
+
+    return await delete_user(cursor=cursor, user_id=user_id)

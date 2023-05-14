@@ -5,7 +5,7 @@ import psycopg2.extensions
 from app.models import Author, Book, OrderStatus, BookFilters, PageNumRange
 
 BOOK_SQL = """
-    SELECT DISTINCT ON (book.title) book.id, book.title, book.isbn, book.num_pages, book.description, book.image_url, (
+    SELECT DISTINCT ON (book.title, book.isbn) book.id, book.title, book.isbn, book.num_pages, book.description, book.image_url, (
         SELECT json_agg(json_build_array(a.id, a.first_name, a.last_name, a.origin)) AS authors
         FROM book_author ba
         JOIN author a on ba.author_id = a.id
@@ -17,7 +17,7 @@ BOOK_SQL = """
 """
 
 BOOK_SEARCH_SQL = """
-    SELECT DISTINCT ON (book.title) book.id, book.title, book.isbn, book.num_pages, book.description, book.image_url, (
+    SELECT DISTINCT ON (book.title, book.isbn) book.id, book.title, book.isbn, book.num_pages, book.description, book.image_url, (
         SELECT json_agg(json_build_array(a.id, a.first_name, a.last_name, a.origin)) AS authors
         FROM book_author ba
         JOIN author a on ba.author_id = a.id
@@ -204,6 +204,7 @@ def filter_books(cursor: psycopg2.extensions.cursor, search_params: dict) -> lis
                     query_params.append(f"book_author.author_id = '{value}'")
 
             FILTER_QUERY += " AND ".join(query_params)
+            FILTER_QUERY += " AND book.deleted_at is NULL"
 
     return _get_books(cursor, FILTER_QUERY)
 
